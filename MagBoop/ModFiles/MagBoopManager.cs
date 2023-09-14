@@ -13,8 +13,7 @@ namespace MagBoop.ModFiles
         {
             Debug.Log("starting mag boop");
 
-            Harmony.CreateAndPatchAll(typeof(MagazinePatches));
-
+            Harmony.CreateAndPatchAll(typeof(HandPatch));
         }
     }
 }

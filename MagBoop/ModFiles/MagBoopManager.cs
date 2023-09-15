@@ -11,8 +11,6 @@ namespace MagBoop.ModFiles
     
         private void Start()
         {
-            Debug.Log("starting mag boop");
-
             Harmony.CreateAndPatchAll(typeof(HandPatch));
         }
     }

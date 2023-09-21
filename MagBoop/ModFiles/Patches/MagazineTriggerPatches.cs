@@ -26,10 +26,12 @@ namespace MagBoop.ModFiles
                 },
                 layer = LayerMask.NameToLayer("Interactable")
             };
-
-
+            
             var triggerCol = interactionObj.AddComponent<BoxCollider>();
             var magCollider = __instance.GetComponent<BoxCollider>();
+            var triggerScript = interactionObj.AddComponent<TriggerProxyScript>();
+            __instance.gameObject.AddComponent<MagazineBoopComponent>().thisTrigger = triggerScript;
+
 
             if (magCollider == null) return;
             
@@ -46,7 +48,7 @@ namespace MagBoop.ModFiles
             cube.transform.localPosition = Vector3.zero;
             cube.transform.localRotation = Quaternion.Euler(Vector3.zero);
             cube.GetComponent<Collider>().enabled = false;
-            interactionObj.AddComponent<TriggerProxyScript>();
+
             
             // Now using the lowest mesh collider, we can set the local pos + rotation of the trigger object
             // Shift forward factor accounts for the fact the bottom of the magazine will be curved, so a simple 

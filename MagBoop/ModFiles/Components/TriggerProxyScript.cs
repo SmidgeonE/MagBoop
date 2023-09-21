@@ -17,6 +17,8 @@ namespace MagBoop.ModFiles
         private const float PitchVariance = 0.2f;
         private static float _currentInvLerpOfSpeed;
 
+        public bool isUnSeated;
+
         protected override void Start()
         {
             var magTransform = transform.parent;
@@ -26,6 +28,21 @@ namespace MagBoop.ModFiles
             base.Start();
         }
 
+        private void ReSeatMagazine()
+        {
+            var magSeatedPos = _thisMagScript.FireArm.GetMagMountPos(_thisMagScript.IsBeltBox).position;
+
+            if (UnityEngine.Random.Range(0f, 1f) < UserConfig.MagRequiresTwoTapsProbability.Value)
+            {
+                Debug.Log("Only Sending mag halfway");
+                _thisMagScript.transform.position = Vector3.Lerp(_thisMagScript.transform.position, magSeatedPos, 0.5f);
+                return;
+            }
+
+            Debug.Log("sending mag home");
+            _thisMagScript.transform.position = magSeatedPos;
+        }
+        
         public void PlayBoopSound(GameObject hand)
         {
             var handRb = hand.GetComponent<Rigidbody>();
@@ -35,6 +52,7 @@ namespace MagBoop.ModFiles
             var upwardsSpeed = Vector3.Dot(handRb.velocity - weaponRb.velocity,
                 weaponRb.transform.position - transform.position);
             
+            ReSeatMagazine();
             
             var impactIntensity = AudioImpactIntensity.Medium;
             if (upwardsSpeed > 0.015f)

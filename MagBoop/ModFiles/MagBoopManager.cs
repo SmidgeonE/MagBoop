@@ -39,6 +39,8 @@ namespace MagBoop.ModFiles
                 "This is the base probability that the magazine will be seated incorrectly even if you push it in with decent force.");
             UserConfig.MagUnseatedProbability = Config.Bind("Probabilities", "Double Feed Probability Multiplier", 3f,
                 "This is the multiplier applied to the double feeding chance of a weapon that has a magazine which isn't seated properly.");
+            UserConfig.MagRequiresTwoTapsProbability = Config.Bind("Probabilities", "Magazine Requires Two Taps Probability", 0.3f,
+                "This is the probability a single tap will not fully seat the magazine back into place.");
         }
     }
 }

@@ -51,12 +51,14 @@ namespace MagBoop.ModFiles
             triggerCol.isTrigger = true;
 
             // Debug cube
+            /*
             var cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
             cube.transform.parent = interactionObj.transform;
             cube.transform.localScale = triggerCol.size;
             cube.transform.localPosition = Vector3.zero;
             cube.transform.localRotation = Quaternion.Euler(Vector3.zero);
             cube.GetComponent<Collider>().enabled = false;
+            */
 
             
             // Now using the lowest mesh collider, we can set the local pos + rotation of the trigger object

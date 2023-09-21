@@ -22,6 +22,7 @@ namespace MagBoop.ModFiles
 
         public const float SoundCooldown = 0.1f;
         public float soundCooldownTimer;
+        public bool hasAlreadyTappedOnce;
 
         protected override void Start()
         {
@@ -40,17 +41,17 @@ namespace MagBoop.ModFiles
         private void ReSeatMagazine()
         {
             if (!isUnSeated) return;
+            if (_thisMagScript == null) return;
             
             var magSeatedPos = _thisMagScript.FireArm.GetMagMountPos(_thisMagScript.IsBeltBox).position;
 
-            if (UnityEngine.Random.Range(0f, 1f) < UserConfig.MagRequiresTwoTapsProbability.Value)
+            if (UnityEngine.Random.Range(0f, 1f) < UserConfig.MagRequiresTwoTapsProbability.Value && !hasAlreadyTappedOnce)
             {
-                Debug.Log("Only Sending mag halfway");
                 _thisMagScript.transform.position = Vector3.Lerp(_thisMagScript.transform.position, magSeatedPos, 0.5f);
+                hasAlreadyTappedOnce = true;
                 return;
             }
-
-            Debug.Log("sending mag home");
+            
             _thisMagScript.transform.position = magSeatedPos;
             isUnSeated = false;
             
@@ -69,8 +70,9 @@ namespace MagBoop.ModFiles
             if (_thisMagScript.FireArm == null) return;
             
             var weaponRb = _thisMagScript.FireArm.RootRigidbody;
-            var upwardsSpeed = Vector3.Dot(handRb.velocity - weaponRb.velocity,
-                weaponRb.transform.position - transform.position);
+            var upwardsSpeed = Vector3.Dot(handRb.velocity - weaponRb.velocity, weaponRb.transform.up);
+
+            if (upwardsSpeed < 0) return;
             
             if (UserConfig.EnableMagUnSeating.Value) ReSeatMagazine();
             

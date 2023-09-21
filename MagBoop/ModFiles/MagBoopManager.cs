@@ -12,6 +12,7 @@ namespace MagBoop.ModFiles
         private void Start()
         {
             Harmony.CreateAndPatchAll(typeof(HandPatch));
+            Harmony.CreateAndPatchAll(typeof(MagazineTriggerPatches));
         }
     }
 }

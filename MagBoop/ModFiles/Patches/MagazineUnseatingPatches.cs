@@ -1,6 +1,7 @@
 ﻿using System;
 using FistVR;
 using HarmonyLib;
+using Stovepipe;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -25,6 +26,12 @@ namespace MagBoop.ModFiles
 
             __instance.transform.position -= __instance.transform.up * 0.01f;
             magBoopComp.thisTrigger.isUnSeated = true;
+
+            var doubleFeedData = __instance.FireArm.GetComponent<DoubleFeedData>();
+            if (doubleFeedData == null) return;
+            
+            doubleFeedData.doubleFeedChance *= UserConfig.DoubleFeedMultiplier.Value;
+            doubleFeedData.doubleFeedMaxChance *= UserConfig.DoubleFeedMultiplier.Value;
         }
     }
 }

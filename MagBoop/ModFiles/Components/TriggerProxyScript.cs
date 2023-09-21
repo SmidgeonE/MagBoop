@@ -1,6 +1,7 @@
 ﻿using System;
 using FistVR;
 using HarmonyLib;
+using Stovepipe;
 using UnityEngine;
 using Random = System.Random;
 
@@ -51,6 +52,13 @@ namespace MagBoop.ModFiles
 
             Debug.Log("sending mag home");
             _thisMagScript.transform.position = magSeatedPos;
+            isUnSeated = false;
+            
+            var doubleFeedData = _thisMagScript.FireArm.GetComponent<DoubleFeedData>();
+            if (doubleFeedData == null) return;
+            
+            doubleFeedData.doubleFeedChance *= UserConfig.DoubleFeedMultiplier.Value;
+            doubleFeedData.doubleFeedMaxChance *= UserConfig.DoubleFeedMultiplier.Value;
         }
         
         public void PlayBoopSound(GameObject hand)

@@ -18,6 +18,9 @@
       <Reference Include="BepInEx">
         <HintPath>..\dependencies\BepInEx.dll</HintPath>
       </Reference>
+      <Reference Include="Stovepipe">
+        <HintPath>..\dependencies\Stovepipe.dll</HintPath>
+      </Reference>
     </ItemGroup>
 
 </Project>

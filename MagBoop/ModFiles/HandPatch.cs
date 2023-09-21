@@ -53,6 +53,8 @@ namespace MagBoop.ModFiles
         {
             if (__instance.IsIntegrated) return;
             if (__instance.IsEnBloc) return;
+            
+            var bottomCollider = FindMainCollider(__instance);
 
             var interactionObj = new GameObject("MagBoopObj")
             {
@@ -65,50 +67,70 @@ namespace MagBoop.ModFiles
             };
 
 
-            var collider = interactionObj.AddComponent<BoxCollider>();
+            var triggerCol = interactionObj.AddComponent<BoxCollider>();
             var magCollider = __instance.GetComponent<BoxCollider>();
 
             if (magCollider == null) return;
             
             var magSize = magCollider.size;
 
-            collider.center = Vector3.zero;
-            collider.size = new Vector3(magSize.x, 0.02f, magSize.z);
-            collider.isTrigger = true;
+            triggerCol.center = Vector3.zero;
+            triggerCol.size = new Vector3(magSize.x, 0.02f, magSize.z);
+            triggerCol.isTrigger = true;
 
             // Debug cube
             var cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
             cube.transform.parent = interactionObj.transform;
-            cube.transform.localScale = collider.size;
+            cube.transform.localScale = triggerCol.size;
             cube.transform.localPosition = Vector3.zero;
             cube.transform.localRotation = Quaternion.Euler(Vector3.zero);
             cube.GetComponent<Collider>().enabled = false;
             interactionObj.AddComponent<TriggerProxyScript>();
             
             // Now using the lowest mesh collider, we can set the local pos + rotation of the trigger object
-            var bottomTransform = FindBottomTransform(___m_colliders);
-
-            interactionObj.transform.localRotation = bottomTransform.localRotation;
-            interactionObj.transform.localPosition = magCollider.center
-                                                     + Vector3.down * ((magSize.y / 2) + 0.02f)
-                                                     - Vector3.forward * (float) Math.Tan(interactionObj.transform.localRotation.x) * ((magSize.y / 2) + 0.02f);
+            var bottomColTransform = bottomCollider.transform;
+            
+            interactionObj.transform.localRotation = bottomColTransform.localRotation;
+            interactionObj.transform.localPosition = ColliderLocalLowestPos(bottomCollider);
         }
 
-        
-        private static Transform FindBottomTransform(IList<Collider> colliders)
+        private static Vector3 ColliderLocalLowestPos(BoxCollider boxCol)
         {
-            // We iterate through all collider, whichever one is lowest will be the highest in the z for some reason 
-            // Thats how magazines are structured
-
-            var currentBottomCollider = colliders[0];
+            // Returns the lowest point of a box collider in local coordinates to the magazine object its attached to.
             
+            return boxCol.transform.localPosition + (boxCol.center - Vector3.up * boxCol.size.y / 2f) * boxCol.transform.localScale.y;
+        }
+
+        private static BoxCollider FindMainCollider(FVRFireArmMagazine mag)
+        {
+            BoxCollider currentBottomCollider = null;
+            var colliders = mag.GetComponentsInChildren<BoxCollider>();
+
             foreach (var collider in colliders)
             {
-                if (collider.transform.localPosition.z > currentBottomCollider.transform.localPosition.z)
+                if (collider.transform == mag.transform) continue;
+                if (currentBottomCollider is null)
+                {
                     currentBottomCollider = collider;
+                    continue;
+                }
+                
+                Debug.Log("current obj name: " + collider.transform.name);
+
+                if (ColliderLocalLowestPos(collider).y < ColliderLocalLowestPos(currentBottomCollider).y)
+                {
+                    currentBottomCollider = collider;
+                    Debug.Log("this collider is lower");
+                }
             }
-            
-            return currentBottomCollider.transform;
+
+            if (currentBottomCollider is null)
+            {
+                Debug.Log("Couldnt find lowest collider on a magazine");
+                currentBottomCollider = new BoxCollider();
+            }
+
+            return currentBottomCollider;
         }
     }
 }

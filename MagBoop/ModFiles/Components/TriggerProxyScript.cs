@@ -19,6 +19,9 @@ namespace MagBoop.ModFiles
 
         public bool isUnSeated;
 
+        public const float SoundCooldown = 0.1f;
+        public float soundCooldownTimer;
+
         protected override void Start()
         {
             var magTransform = transform.parent;
@@ -28,8 +31,15 @@ namespace MagBoop.ModFiles
             base.Start();
         }
 
+        private void Update()
+        {
+            if (soundCooldownTimer > 0) soundCooldownTimer -= Time.fixedDeltaTime;
+        }
+        
         private void ReSeatMagazine()
         {
+            if (!isUnSeated) return;
+            
             var magSeatedPos = _thisMagScript.FireArm.GetMagMountPos(_thisMagScript.IsBeltBox).position;
 
             if (UnityEngine.Random.Range(0f, 1f) < UserConfig.MagRequiresTwoTapsProbability.Value)
@@ -45,6 +55,8 @@ namespace MagBoop.ModFiles
         
         public void PlayBoopSound(GameObject hand)
         {
+            if (soundCooldownTimer > 0) return;
+            
             var handRb = hand.GetComponent<Rigidbody>();
             if (_thisMagScript.FireArm == null) return;
             
@@ -52,7 +64,7 @@ namespace MagBoop.ModFiles
             var upwardsSpeed = Vector3.Dot(handRb.velocity - weaponRb.velocity,
                 weaponRb.transform.position - transform.position);
             
-            ReSeatMagazine();
+            if (UserConfig.EnableMagUnSeating.Value) ReSeatMagazine();
             
             var impactIntensity = AudioImpactIntensity.Medium;
             if (upwardsSpeed > 0.015f)
@@ -74,6 +86,8 @@ namespace MagBoop.ModFiles
             
             SM.PlayImpactSound(_thisController.ImpactType, impactMat, impactIntensity, transform.parent.position,
                 _thisController.PoolToUse, _thisController.DistLimit, movementBasedVolume, randomPitch);
+
+            soundCooldownTimer = SoundCooldown;
         }
     }
 }

@@ -7,6 +7,15 @@ namespace MagBoop.ModFiles
 {
     public class MagazineTriggerPatches
     {
+        [HarmonyPatch(typeof(FVRFireArmMagazine), "Load", typeof(FVRFireArm))]
+        [HarmonyPostfix]
+        private static void StopInteractionOnMagLoad(FVRFireArmMagazine __instance)
+        {
+            var magBoopComp = __instance.GetComponent<MagazineBoopComponent>();
+            if (magBoopComp is null) return;
+            
+            magBoopComp.thisTrigger.soundCooldownTimer = TriggerProxyScript.SoundCooldown;
+        }
         
         [HarmonyPatch(typeof(FVRFireArmMagazine), "Awake")]
         [HarmonyPostfix]

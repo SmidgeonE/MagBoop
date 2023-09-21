@@ -14,18 +14,16 @@ namespace MagBoop.ModFiles
         {
             if (!__instance.IsExtractable) return;
             if (__instance.IsEnBloc) return;
+            
+            var magBoopComp = __instance.GetComponent<MagazineBoopComponent>();
+            if (magBoopComp is null) return;
+            if (magBoopComp.thisTrigger.isUnSeated) return;
 
             if (Random.Range(0f, 1f) >= UserConfig.MagUnseatedProbability.Value) return;
             
             // Unseat Mag
-            
-            Debug.Log("Unseating Mag");
 
-            __instance.transform.position -= __instance.transform.up * 0.04f;
-
-            var magBoopComp = __instance.GetComponent<MagazineBoopComponent>();
-            if (magBoopComp is null) return;
-
+            __instance.transform.position -= __instance.transform.up * 0.01f;
             magBoopComp.thisTrigger.isUnSeated = true;
         }
     }

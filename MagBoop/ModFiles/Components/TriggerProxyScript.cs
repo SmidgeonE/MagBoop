@@ -100,10 +100,12 @@ namespace MagBoop.ModFiles
 
             
             // Gather how loud the sound should be based on the movement of the hand.
+            // If this boop is the one to make the mag fully seated, it will be lower pitch so the user knows
             
             _currentInvLerpOfSpeed = Mathf.InverseLerp(MinSpeed, MaxSpeed, upwardsSpeed);
             var movementBasedVolume = 3f + _currentInvLerpOfSpeed * VolumeVariance;
             var randomPitch = 1 + UnityEngine.Random.Range(0f, PitchVariance);
+            if (!isUnSeated) randomPitch *= 0.5f;
             
             SM.PlayImpactSound(_thisController.ImpactType, impactMat, impactIntensity, transform.parent.position,
                 _thisController.PoolToUse, _thisController.DistLimit, movementBasedVolume, randomPitch);

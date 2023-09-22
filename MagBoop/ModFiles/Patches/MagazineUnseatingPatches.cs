@@ -39,7 +39,7 @@ namespace MagBoop.ModFiles
         [HarmonyPatch(typeof(FVRFireArmMagazine), "Release")]
         [HarmonyPatch(typeof(FVRFireArmMagazine), "ReleaseFromAttachableFireArm")]
         [HarmonyPatch(typeof(FVRFireArmMagazine), "ReleaseFromSecondarySlot")]
-        [HarmonyPostfix]
+        [HarmonyPrefix]
         private static void StopFromMakingSound(FVRFireArmMagazine __instance)
         {
             var magBoopComp = __instance.GetComponent<MagazineBoopComponent>();
@@ -47,5 +47,26 @@ namespace MagBoop.ModFiles
 
             magBoopComp.thisTrigger.StartCooldownTimer();
         }
+
+        [HarmonyPatch(typeof(FVRFireArm), "SetRound", typeof(FVRFireArmRound), typeof(bool))]
+        [HarmonyPatch(typeof(FVRFireArm), "SetRound", typeof(FireArmRoundClass), typeof(Vector3), typeof(Quaternion))]
+        [HarmonyPatch(typeof(FVRFireArm), "SetRound", typeof(FVRFireArmRound), typeof(Vector3), typeof(Quaternion))]
+        [HarmonyPrefix]
+        private static bool StopFromLoadingRoundIfMagIsFullyUnSeated(FVRFireArm __instance)
+        {
+            if (__instance.Magazine == null) return true;
+            
+            var magBoopComp = __instance.Magazine.GetComponent<MagazineBoopComponent>();
+            if (magBoopComp == null) return true;
+
+            if (magBoopComp.thisTrigger.isUnSeated && !magBoopComp.thisTrigger.hasAlreadyTappedOnce &&
+                UserConfig.EnableMagUnSeating.Value)
+            {
+                return false;
+            }
+
+            return true;
+        }
+        
     }
 }

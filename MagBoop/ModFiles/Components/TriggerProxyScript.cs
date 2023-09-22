@@ -33,6 +33,16 @@ namespace MagBoop.ModFiles
             base.Start();
         }
 
+        public void StartCooldownTimer()
+        {
+            soundCooldownTimer = SoundCooldown;
+        }
+
+        public override void BeginInteraction(FVRViveHand hand)
+        {
+            
+        }
+
         private void Update()
         {
             if (soundCooldownTimer > 0) soundCooldownTimer -= Time.fixedDeltaTime;
@@ -42,7 +52,7 @@ namespace MagBoop.ModFiles
         {
             if (!isUnSeated) return;
             if (_thisMagScript == null) return;
-            
+
             var magSeatedPos = _thisMagScript.FireArm.GetMagMountPos(_thisMagScript.IsBeltBox).position;
 
             if (UnityEngine.Random.Range(0f, 1f) < UserConfig.MagRequiresTwoTapsProbability.Value && !hasAlreadyTappedOnce)
@@ -65,6 +75,7 @@ namespace MagBoop.ModFiles
         public void PlayBoopSound(GameObject hand)
         {
             if (soundCooldownTimer > 0) return;
+            if (_thisMagScript.FireArm.QuickbeltSlot != null) return;
             
             var handRb = hand.GetComponent<Rigidbody>();
             if (_thisMagScript.FireArm == null) return;
@@ -97,7 +108,7 @@ namespace MagBoop.ModFiles
             SM.PlayImpactSound(_thisController.ImpactType, impactMat, impactIntensity, transform.parent.position,
                 _thisController.PoolToUse, _thisController.DistLimit, movementBasedVolume, randomPitch);
 
-            soundCooldownTimer = SoundCooldown;
+            StartCooldownTimer();
         }
     }
 }

@@ -35,5 +35,17 @@ namespace MagBoop.ModFiles
             doubleFeedData.doubleFeedChance *= UserConfig.DoubleFeedMultiplier.Value;
             doubleFeedData.doubleFeedMaxChance *= UserConfig.DoubleFeedMultiplier.Value;
         }
+
+        [HarmonyPatch(typeof(FVRFireArmMagazine), "Release")]
+        [HarmonyPatch(typeof(FVRFireArmMagazine), "ReleaseFromAttachableFireArm")]
+        [HarmonyPatch(typeof(FVRFireArmMagazine), "ReleaseFromSecondarySlot")]
+        [HarmonyPostfix]
+        private static void StopFromMakingSound(FVRFireArmMagazine __instance)
+        {
+            var magBoopComp = __instance.GetComponent<MagazineBoopComponent>();
+            if (magBoopComp is null) return;
+
+            magBoopComp.thisTrigger.StartCooldownTimer();
+        }
     }
 }

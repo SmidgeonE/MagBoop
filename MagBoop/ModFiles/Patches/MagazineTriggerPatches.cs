@@ -14,7 +14,7 @@ namespace MagBoop.ModFiles
             var magBoopComp = __instance.GetComponent<MagazineBoopComponent>();
             if (magBoopComp is null) return;
             
-            magBoopComp.thisTrigger.soundCooldownTimer = TriggerProxyScript.SoundCooldown;
+            magBoopComp.thisTrigger.StartCooldownTimer();
         }
         
         [HarmonyPatch(typeof(FVRFireArmMagazine), "Awake")]

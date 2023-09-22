@@ -14,8 +14,8 @@ namespace MagBoop.ModFiles
 
         private const float MinSpeed = 0.001f;
         private const float MaxSpeed = 0.05f;
-        private const float VolumeVariance = 1.5f;
-        private const float PitchVariance = 0.2f;
+        private const float VolumeVariance = 2f;
+        private const float PitchVariance = 0.5f;
         private static float _currentInvLerpOfSpeed;
 
         public bool isUnSeated;
@@ -91,7 +91,7 @@ namespace MagBoop.ModFiles
             // Gather how loud the sound should be based on the movement of the hand.
             
             _currentInvLerpOfSpeed = Mathf.InverseLerp(MinSpeed, MaxSpeed, upwardsSpeed);
-            var movementBasedVolume = 2.5f + _currentInvLerpOfSpeed * VolumeVariance;
+            var movementBasedVolume = 3f + _currentInvLerpOfSpeed * VolumeVariance;
             var randomPitch = 1 + UnityEngine.Random.Range(0f, PitchVariance);
             
             SM.PlayImpactSound(_thisController.ImpactType, impactMat, impactIntensity, transform.parent.position,

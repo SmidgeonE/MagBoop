@@ -30,6 +30,10 @@ namespace MagBoop.ModFiles
             
             var trigScript = collider.GetComponent<TriggerProxyScript>();
             if (trigScript == null) return;
+
+            if (trigScript.transform.parent.GetComponent<FVRFireArmMagazine>().FireArm ==
+                __instance.CurrentInteractable)
+                return;
             
             trigScript.PlayBoopSound(__instance.gameObject);
         }

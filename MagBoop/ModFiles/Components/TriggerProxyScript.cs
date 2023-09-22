@@ -20,7 +20,7 @@ namespace MagBoop.ModFiles
 
         public bool isUnSeated;
 
-        public const float SoundCooldown = 0.1f;
+        public const float SoundCooldown = 0.2f;
         public float soundCooldownTimer;
         public bool hasAlreadyTappedOnce;
 
@@ -40,7 +40,7 @@ namespace MagBoop.ModFiles
 
         public override void BeginInteraction(FVRViveHand hand)
         {
-            
+            ForceBreakInteraction();
         }
 
         private void Update()
@@ -68,17 +68,19 @@ namespace MagBoop.ModFiles
             var doubleFeedData = _thisMagScript.FireArm.GetComponent<DoubleFeedData>();
             if (doubleFeedData == null) return;
             
-            doubleFeedData.doubleFeedChance *= UserConfig.DoubleFeedMultiplier.Value;
-            doubleFeedData.doubleFeedMaxChance *= UserConfig.DoubleFeedMultiplier.Value;
+            /*Debug.Log("reduing duble feed multiplier");*/
+            doubleFeedData.doubleFeedChance /= UserConfig.DoubleFeedMultiplier.Value;
+            doubleFeedData.doubleFeedMaxChance /= UserConfig.DoubleFeedMultiplier.Value;
         }
         
         public void PlayBoopSound(GameObject hand)
         {
             if (soundCooldownTimer > 0) return;
-            if (_thisMagScript.FireArm.QuickbeltSlot != null) return;
             
             var handRb = hand.GetComponent<Rigidbody>();
             if (_thisMagScript.FireArm == null) return;
+            if (_thisMagScript.FireArm.QuickbeltSlot != null) return;
+
             
             var weaponRb = _thisMagScript.FireArm.RootRigidbody;
             var upwardsSpeed = Vector3.Dot(handRb.velocity - weaponRb.velocity, weaponRb.transform.up);
@@ -105,7 +107,7 @@ namespace MagBoop.ModFiles
             _currentInvLerpOfSpeed = Mathf.InverseLerp(MinSpeed, MaxSpeed, upwardsSpeed);
             var movementBasedVolume = 3f + _currentInvLerpOfSpeed * VolumeVariance;
             var randomPitch = 1 + UnityEngine.Random.Range(0f, PitchVariance);
-            if (!isUnSeated) randomPitch *= 0.5f;
+            if (!isUnSeated) randomPitch *= 0.75f;
             
             SM.PlayImpactSound(_thisController.ImpactType, impactMat, impactIntensity, transform.parent.position,
                 _thisController.PoolToUse, _thisController.DistLimit, movementBasedVolume, randomPitch);

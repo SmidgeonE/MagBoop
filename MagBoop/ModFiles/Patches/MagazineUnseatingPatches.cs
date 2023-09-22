@@ -32,6 +32,9 @@ namespace MagBoop.ModFiles
             var doubleFeedData = __instance.FireArm.GetComponent<DoubleFeedData>();
             if (doubleFeedData == null) return;
             
+            /*Debug.Log("increaseing double feed mutli;liers");
+            Debug.Log("from " + doubleFeedData.doubleFeedChance);
+            Debug.Log("to " + doubleFeedData.doubleFeedChance * UserConfig.DoubleFeedMultiplier.Value);*/
             doubleFeedData.doubleFeedChance *= UserConfig.DoubleFeedMultiplier.Value;
             doubleFeedData.doubleFeedMaxChance *= UserConfig.DoubleFeedMultiplier.Value;
         }
@@ -40,33 +43,22 @@ namespace MagBoop.ModFiles
         [HarmonyPatch(typeof(FVRFireArmMagazine), "ReleaseFromAttachableFireArm")]
         [HarmonyPatch(typeof(FVRFireArmMagazine), "ReleaseFromSecondarySlot")]
         [HarmonyPrefix]
-        private static void StopFromMakingSound(FVRFireArmMagazine __instance)
+        private static void StopMagReleasingMakingSoundAndReducingDoubleFeed(FVRFireArmMagazine __instance)
         {
             var magBoopComp = __instance.GetComponent<MagazineBoopComponent>();
             if (magBoopComp is null) return;
 
             magBoopComp.thisTrigger.StartCooldownTimer();
-        }
 
-        [HarmonyPatch(typeof(FVRFireArm), "SetRound", typeof(FVRFireArmRound), typeof(bool))]
-        [HarmonyPatch(typeof(FVRFireArm), "SetRound", typeof(FireArmRoundClass), typeof(Vector3), typeof(Quaternion))]
-        [HarmonyPatch(typeof(FVRFireArm), "SetRound", typeof(FVRFireArmRound), typeof(Vector3), typeof(Quaternion))]
-        [HarmonyPrefix]
-        private static bool StopFromLoadingRoundIfMagIsFullyUnSeated(FVRFireArm __instance)
-        {
-            if (__instance.Magazine == null) return true;
+            if (!magBoopComp.thisTrigger.isUnSeated) return;
             
-            var magBoopComp = __instance.Magazine.GetComponent<MagazineBoopComponent>();
-            if (magBoopComp == null) return true;
+            magBoopComp.thisTrigger.isUnSeated = false;
+            
+            var doubleFeedData = __instance.FireArm.GetComponent<DoubleFeedData>();
+            if (doubleFeedData is null) return;
 
-            if (magBoopComp.thisTrigger.isUnSeated && !magBoopComp.thisTrigger.hasAlreadyTappedOnce &&
-                UserConfig.EnableMagUnSeating.Value)
-            {
-                return false;
-            }
-
-            return true;
+            doubleFeedData.doubleFeedChance /= UserConfig.DoubleFeedMultiplier.Value;
+            doubleFeedData.doubleFeedMaxChance /= UserConfig.DoubleFeedMultiplier.Value;
         }
-        
     }
 }

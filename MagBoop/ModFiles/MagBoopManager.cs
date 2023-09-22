@@ -23,6 +23,7 @@ namespace MagBoop.ModFiles
             if (UserConfig.EnableMagUnSeating.Value)
             {
                 Harmony.CreateAndPatchAll(typeof(MagazineUnseatingPatches));
+                Harmony.CreateAndPatchAll(typeof(DisableChamberingPatches));
             }
         }
 

@@ -20,6 +20,8 @@ If you have any issues / ideas / need help with modding, I am always available o
 
 # Changelog
 
+1.0.2 - Updated so it actually works now.
+
 1.0.1 - More info in readme.
 
 1.0.0 - Initial release.

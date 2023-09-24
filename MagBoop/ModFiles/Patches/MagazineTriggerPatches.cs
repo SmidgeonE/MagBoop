@@ -16,6 +16,18 @@ namespace MagBoop.ModFiles
             
             magBoopComp.thisTrigger.StartCooldownTimer();
         }
+
+        [HarmonyPatch(typeof(FVRFireArm), "Fire")]
+        [HarmonyPostfix]
+        private static void StopFromBoopingIfJustShot(FVRFireArm __instance)
+        {
+            if (__instance.Magazine == null) return;
+            
+            var magBoopComp = __instance.Magazine.GetComponent<MagazineBoopComponent>();
+            if (magBoopComp is null) return;
+            
+            magBoopComp.thisTrigger.StartCooldownTimer();
+        }
         
         [HarmonyPatch(typeof(FVRFireArmMagazine), "Awake")]
         [HarmonyPostfix]

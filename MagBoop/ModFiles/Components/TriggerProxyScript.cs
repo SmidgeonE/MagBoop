@@ -73,17 +73,20 @@ namespace MagBoop.ModFiles
             doubleFeedData.doubleFeedMaxChance /= UserConfig.DoubleFeedMultiplier.Value;
         }
         
-        public void PlayBoopSound(GameObject hand)
+        public void PlayBoopSound(FVRViveHand hand)
         {
             if (soundCooldownTimer > 0) return;
             
             var handRb = hand.GetComponent<Rigidbody>();
             if (_thisMagScript.FireArm == null) return;
-            if (_thisMagScript.FireArm.QuickbeltSlot != null) return;
+            if (_thisMagScript.FireArm.QuickbeltSlot != null
+                && !_thisMagScript.FireArm.IsHeld 
+                && GM.Options.MovementOptions.CurrentMovementMode == FVRMovementManager.MovementMode.Armswinger) return;
+            if (hand.CurrentInteractable.gameObject == _thisMagScript.FireArm.Foregrip) return;
 
             
             var weaponRb = _thisMagScript.FireArm.RootRigidbody;
-            var upwardsSpeed = Vector3.Dot(handRb.velocity - weaponRb.velocity, weaponRb.transform.up);
+            var upwardsSpeed = Vector3.Dot(handRb.velocity - weaponRb.velocity, _thisMagScript.transform.up);
 
             if (upwardsSpeed < 0) return;
             

@@ -35,6 +35,7 @@ namespace MagBoop.ModFiles
         {
             if (__instance.IsIntegrated) return;
             if (__instance.IsEnBloc) return;
+            if (__instance.gameObject.name == "G11_Mag(Clone)") return;
             
             var bottomCollider = FindMainCollider(__instance);
 

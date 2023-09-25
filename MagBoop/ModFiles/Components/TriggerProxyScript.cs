@@ -30,6 +30,7 @@ namespace MagBoop.ModFiles
             
             _thisMagScript = magTransform.GetComponent<FVRFireArmMagazine>();
             _thisController = magTransform.GetComponent<AudioImpactController>();
+            
             base.Start();
         }
 
@@ -41,6 +42,11 @@ namespace MagBoop.ModFiles
         public override void BeginInteraction(FVRViveHand hand)
         {
             ForceBreakInteraction();
+        }
+
+        public override bool IsInteractable()
+        {
+            return false;
         }
 
         private void Update()
@@ -73,7 +79,7 @@ namespace MagBoop.ModFiles
             doubleFeedData.doubleFeedMaxChance /= UserConfig.DoubleFeedMultiplier.Value;
         }
         
-        public void PlayBoopSound(FVRViveHand hand)
+        public void CheckAndPlayBoopSound(FVRViveHand hand)
         {
             if (soundCooldownTimer > 0) return;
             
@@ -82,9 +88,9 @@ namespace MagBoop.ModFiles
             if (_thisMagScript.FireArm.QuickbeltSlot != null
                 && !_thisMagScript.FireArm.IsHeld 
                 && GM.Options.MovementOptions.CurrentMovementMode == FVRMovementManager.MovementMode.Armswinger) return;
-            if (hand.CurrentInteractable.gameObject == _thisMagScript.FireArm.Foregrip) return;
+            if (hand.CurrentInteractable != null) return;
 
-            
+
             var weaponRb = _thisMagScript.FireArm.RootRigidbody;
             var upwardsSpeed = Vector3.Dot(handRb.velocity - weaponRb.velocity, _thisMagScript.transform.up);
 

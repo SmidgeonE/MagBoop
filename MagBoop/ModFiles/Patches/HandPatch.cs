@@ -35,7 +35,7 @@ namespace MagBoop.ModFiles
                 __instance.CurrentInteractable)
                 return;
             
-            trigScript.PlayBoopSound(__instance);
+            trigScript.CheckAndPlayBoopSound(__instance);
         }
     }
 }

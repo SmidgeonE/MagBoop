@@ -11,8 +11,7 @@ namespace MagBoop.ModFiles
     {
         private FVRFireArmMagazine _thisMagScript;
         private AudioImpactController _thisController;
-        public static Vector3 CurrentMagSoundPosition;
-
+        
         private const float MinSpeed = 0.001f;
         private const float MaxSpeed = 0.05f;
         private const float VolumeVariance = 2f;
@@ -20,6 +19,7 @@ namespace MagBoop.ModFiles
         private static float _currentInvLerpOfSpeed;
 
         public bool isUnSeated;
+        public bool hasStartedMagNoiseTimer;
 
         public const float SoundCooldown = 0.2f;
         public float soundCooldownTimer;
@@ -83,6 +83,7 @@ namespace MagBoop.ModFiles
         public void CheckAndPlayBoopSound(FVRViveHand hand)
         {
             if (soundCooldownTimer > 0) return;
+            if (hand.Input.GripPressed) return;
             
             var handRb = hand.GetComponent<Rigidbody>();
             if (_thisMagScript.FireArm == null) return;
@@ -119,8 +120,6 @@ namespace MagBoop.ModFiles
             var randomPitch = 1 + UnityEngine.Random.Range(0f, PitchVariance);
             if (!isUnSeated) randomPitch *= 0.75f;
 
-            CurrentMagSoundPosition = _thisMagScript.FireArm.transform.position;
-            
             SM.PlayImpactSound(_thisController.ImpactType, impactMat, impactIntensity, transform.parent.position,
                 _thisController.PoolToUse, _thisController.DistLimit, movementBasedVolume, randomPitch);
             

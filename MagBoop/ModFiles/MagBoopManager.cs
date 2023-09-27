@@ -12,7 +12,9 @@ namespace MagBoop.ModFiles
     public class MagBoopManager : BaseUnityPlugin
     {
         private static FVRPooledAudioSource _currentMagSoundSource;
+        private static float _defaultMagSoundVolume;
         private static float _timeLeft;
+        private static float _timeUntilFadeOut;
         private static bool _hasStoppedSound = true;
         
         private void Start()
@@ -31,14 +33,14 @@ namespace MagBoop.ModFiles
             }
         }
 
-        public static void StartMagSoundShorteningTimer(FVRPooledAudioSource source, float time)
+        public static void StartMagNoiseTimer(FVRPooledAudioSource source, float time)
         {
-            Debug.Log("setting time for shortening to " + time);
             _currentMagSoundSource = source;
             _timeLeft = time;
             _hasStoppedSound = false;
+            _timeUntilFadeOut = time / 2f;
+            _defaultMagSoundVolume = source.Source.volume;
         }
-
 
         private void Update()
         {
@@ -48,13 +50,13 @@ namespace MagBoop.ModFiles
             if (_hasStoppedSound) return;
             if (_timeLeft < 0f)
             {
-                // Stop source sound
-                Debug.Log("Stopping mag sound short");
                 _currentMagSoundSource.Source.Stop();
-
+                _currentMagSoundSource.Source.volume = _defaultMagSoundVolume;
                 _hasStoppedSound = true;
-                return;
             }
+
+            if (_timeLeft < _timeUntilFadeOut)
+                _currentMagSoundSource.Source.volume = _defaultMagSoundVolume * Time.deltaTime / _timeUntilFadeOut;
 
             _timeLeft -= Time.deltaTime;
         }

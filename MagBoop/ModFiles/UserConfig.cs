@@ -1,4 +1,8 @@
-﻿using BepInEx.Configuration;
+﻿using BepInEx;
+using BepInEx.Configuration;
+using FistVR;
+using HarmonyLib;
+using UnityEngine;
 
 namespace MagBoop.ModFiles
 {

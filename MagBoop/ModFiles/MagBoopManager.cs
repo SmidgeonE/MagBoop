@@ -1,5 +1,6 @@
 ﻿using BepInEx;
 using BepInEx.Configuration;
+using FistVR;
 using HarmonyLib;
 using UnityEngine;
 using Valve.VR;
@@ -10,7 +11,10 @@ namespace MagBoop.ModFiles
     [BepInProcess("h3vr.exe")]
     public class MagBoopManager : BaseUnityPlugin
     {
-    
+        private static FVRPooledAudioSource _currentMagSoundSource;
+        private static float _timeLeft;
+        private static bool _hasStoppedSound = true;
+        
         private void Start()
         {
             GenerateUserConfigs();
@@ -27,9 +31,35 @@ namespace MagBoop.ModFiles
             }
         }
 
+        public static void StartMagSoundShorteningTimer(FVRPooledAudioSource source, float time)
+        {
+            Debug.Log("setting time for shortening to " + time);
+            _currentMagSoundSource = source;
+            _timeLeft = time;
+            _hasStoppedSound = false;
+        }
 
 
+        private void Update()
+        {
+            // This update function allows the mag sound to be shortened if it has been unseated.
+            
+            if (!UserConfig.EnableMagUnSeating.Value) return;
+            if (_hasStoppedSound) return;
+            if (_timeLeft < 0f)
+            {
+                // Stop source sound
+                Debug.Log("Stopping mag sound short");
+                _currentMagSoundSource.Source.Stop();
 
+                _hasStoppedSound = true;
+                return;
+            }
+
+            _timeLeft -= Time.deltaTime;
+        }
+        
+        
         private void GenerateUserConfigs()
         {
             UserConfig.EnableMagTapping = Config.Bind("Activation", "Enable Mag Tapping", true,

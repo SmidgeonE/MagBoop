@@ -20,6 +20,8 @@ If you have any issues / ideas / need help with modding, I am always available o
 
 # Changelog
 
+1.0.4 - Disabled weird invisible trigger. Disabled mag booping for weapons that dont need it (i.e. G11)
+
 1.0.3 - Fixed many sources of undeseriable mag boops. added ability to boop slinged weapons. adjusted angle logic for booping.
 
 1.0.2 - Updated so it actually works now.

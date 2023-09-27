@@ -23,7 +23,7 @@ namespace MagBoop.ModFiles
         }
 
         [HarmonyPatch(typeof(FVRViveHand), "TestCollider")]
-        [HarmonyPostfix]
+        [HarmonyPrefix]
         private static void CheckCol(FVRViveHand __instance, Collider collider, bool isEnter)
         {
             if (!isEnter) return;

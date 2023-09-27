@@ -2,6 +2,7 @@
 using FistVR;
 using HarmonyLib;
 using UnityEngine;
+using Object = System.Object;
 
 namespace MagBoop.ModFiles
 {
@@ -55,7 +56,30 @@ namespace MagBoop.ModFiles
             __instance.gameObject.AddComponent<MagazineBoopComponent>().thisTrigger = triggerScript;
 
 
-            if (magCollider == null) return;
+            if (magCollider == null)
+            {
+                // This means it is a capsule collider
+
+                var capsuleCollider = __instance.GetComponent<CapsuleCollider>();
+
+                triggerCol.center = Vector3.zero;
+                triggerCol.size = new Vector3(capsuleCollider.radius, 0.02f, capsuleCollider.height);
+                triggerCol.isTrigger = true;
+
+                interactionObj.transform.localPosition = Vector3.zero -
+                                                         Vector3.up * capsuleCollider.radius *
+                                                         interactionObj.transform.localScale.y;
+
+                // Debug cube
+                var cubeForCapsuleCol = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                cubeForCapsuleCol.transform.parent = interactionObj.transform;
+                cubeForCapsuleCol.transform.localScale = triggerCol.size;
+                cubeForCapsuleCol.transform.localPosition = Vector3.zero;
+                cubeForCapsuleCol.transform.localRotation = Quaternion.Euler(Vector3.zero);
+                cubeForCapsuleCol.GetComponent<Collider>().enabled = false;
+
+                return;
+            }
             
             var magSize = magCollider.size;
 
@@ -64,14 +88,12 @@ namespace MagBoop.ModFiles
             triggerCol.isTrigger = true;
 
             // Debug cube
-            /*
             var cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
             cube.transform.parent = interactionObj.transform;
             cube.transform.localScale = triggerCol.size;
             cube.transform.localPosition = Vector3.zero;
             cube.transform.localRotation = Quaternion.Euler(Vector3.zero);
             cube.GetComponent<Collider>().enabled = false;
-            */
 
             
             // Now using the lowest mesh collider, we can set the local pos + rotation of the trigger object

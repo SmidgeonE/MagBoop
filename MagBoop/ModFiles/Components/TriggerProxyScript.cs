@@ -101,6 +101,8 @@ namespace MagBoop.ModFiles
 
             var weaponRb = _thisMagScript.FireArm.RootRigidbody;
             var upwardsSpeed = Vector3.Dot(handRb.velocity - weaponRb.velocity, _thisMagScript.transform.up);
+
+            if (upwardsSpeed < 0.002f) return;
             
             Debug.Log("velocity upwrads : " + upwardsSpeed);
 

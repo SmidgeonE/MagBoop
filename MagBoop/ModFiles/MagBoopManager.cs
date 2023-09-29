@@ -68,8 +68,11 @@ namespace MagBoop.ModFiles
                 "This enables the mag tapping aspect of the mod.");
             UserConfig.EnableMagUnSeating = Config.Bind("Activation", "Enable Mag Unseating", true,
                 "This enables the mag to be unseated, based on random chance as well as how fast / hard you push the magazine in.");
-            UserConfig.MagUnseatedProbability = Config.Bind("Probabilities", "Probability of Being Unseated", 0.4f,
+            
+            UserConfig.MagUnseatedProbability = Config.Bind("Probabilities", "Probability of Being Unseated", 0.1f,
                 "This is the base probability that the magazine will be seated incorrectly even if you push it in with decent force.");
+            UserConfig.SlowSpeedUnseatingProbability = Config.Bind("Probabilities", "Probability of mag being unseated when inserted SLOWLY", 0.9f,
+                "This is the base probability that the magazine will be seated incorrectly if you insert it really slowly.");
             UserConfig.DoubleFeedMultiplier = Config.Bind("Probabilities", "Double Feed Probability Multiplier", 5f,
                 "This is the multiplier applied to the double feeding chance of a weapon that has a magazine which isn't seated properly.");
             UserConfig.MagRequiresTwoTapsProbability = Config.Bind("Probabilities", "Magazine Requires Two Taps Probability", 0.3f,

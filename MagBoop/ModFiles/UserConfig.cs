@@ -12,6 +12,8 @@ namespace MagBoop.ModFiles
         public static ConfigEntry<bool> EnableMagUnSeating;
         
         public static ConfigEntry<float> MagUnseatedProbability;
+        public static ConfigEntry<float> SlowSpeedUnseatingProbability;
+
         public static ConfigEntry<float> DoubleFeedMultiplier;
         public static ConfigEntry<float> MagRequiresTwoTapsProbability;
     }

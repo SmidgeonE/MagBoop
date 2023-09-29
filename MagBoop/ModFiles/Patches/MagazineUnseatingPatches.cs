@@ -25,11 +25,24 @@ namespace MagBoop.ModFiles
             if (magBoopComp is null) return;
             if (magBoopComp.thisTrigger.isUnSeated) return;
 
-            if (Random.Range(0f, 1f) < UserConfig.MagUnseatedProbability.Value)
+            
+            // Modulating the probability based on the speed of insertion
+            var hand = __instance.m_hand;
+            if (hand is null) return;
+            
+            var magSpeedRelativeToWeapon = (hand.GetComponent<Rigidbody>().velocity
+                                            - fireArm.RootRigidbody.velocity).magnitude;
+            
+            const float slowSpeed = 0.02f;
+            const float quickSpeed = 0.2f;
+
+            var speedLerp = Mathf.InverseLerp(slowSpeed, quickSpeed, magSpeedRelativeToWeapon);
+            var lerpedProbability = Mathf.Lerp(UserConfig.SlowSpeedUnseatingProbability.Value,
+                UserConfig.MagUnseatedProbability.Value, speedLerp);
+
+            if (Random.Range(0f, 1f) < lerpedProbability)
             {
-                Debug.Log("unseating");
                 magBoopComp.thisTrigger.isUnSeated = true;
-                Debug.Log("mag boop comp is unseated set to true");
                 magBoopComp.thisTrigger.hasStartedMagNoiseTimer = false;
                 _currentUnSeatedWeapon = fireArm;
                 magBoopComp.thisTrigger.hasAlreadyTappedOnce = false;
@@ -47,7 +60,8 @@ namespace MagBoop.ModFiles
             // Unseat Mag
 
             var magTransform = __instance.transform;
-            var magInsertsAboveBore = Vector3.Dot(magTransform.localPosition, __instance.FireArm.transform.up) > 0.04f;
+            var magInsertsAboveBore = Vector3.Dot(__instance.FireArm.GetMagMountPos(__instance.IsBeltBox).localPosition, 
+                __instance.FireArm.GetChambers()[0].transform.position) > 0.03f;
 
             if (magInsertsAboveBore)
                 magTransform.position += magTransform.up * 0.015f;
@@ -73,10 +87,12 @@ namespace MagBoop.ModFiles
             if (magBoopComp is null) return;
 
             // Unseat Mag
+            
+            var magInsertsAboveBore = __instance.transform.localPosition.y >
+                                      __instance.FireArm.GetChambers()[0].transform.localPosition.y;
 
-            var magTransform = __instance.transform;
-            Debug.Log("distance above bore : " + Vector3.Dot(magTransform.localPosition, __instance.FireArm.transform.up));
-            var magInsertsAboveBore = Vector3.Dot(magTransform.localPosition, __instance.FireArm.transform.up) > 0.05f;
+            if (Mathf.Abs(Vector3.Dot(__instance.transform.up, __instance.FireArm.transform.right)) > 0.1f)
+                magInsertsAboveBore = false;
 
             if (magInsertsAboveBore)
                 MagazineTriggerPatches.AddOrSwapOrientationOfImpactProxy(__instance);

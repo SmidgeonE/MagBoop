@@ -5,5 +5,6 @@ namespace MagBoop.ModFiles
     public class MagazineBoopComponent : MonoBehaviour
     {
         public TriggerProxyScript thisTrigger;
+        public bool hasAlreadyAdjustedTrigger;
     }
 }

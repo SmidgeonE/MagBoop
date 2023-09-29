@@ -1,7 +1,7 @@
 {
 	"name": "MagBoop",
-	"version_number": "1.0.4",
+	"version_number": "1.0.6",
 	"description": "Implements mag tapping into the game, where the magazine has to be pushed into a weapon to be properly seated, the 'tap' in 'tap, rack, bang'. Requires Stovepipe mod, but you can simply disable it.",
 	"website_url": "https://github.com/SmidgeonE/MagBoop",
-	"dependencies": ["Smidgeon-Stovepipe-3.1.4"]
+	"dependencies": ["Smidgeon-Stovepipe-3.1.5"]
 }

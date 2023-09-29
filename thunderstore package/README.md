@@ -20,9 +20,13 @@ If you have any issues / ideas / need help with modding, I am always available o
 
 # Changelog
 
+1.0.6 - Removed debug cube.
+
+1.0.5 - Added sound effects so its more obvious if the mag is not seated correctly. Fixed bugs with certain capsule-shaped magazines. 
+
 1.0.4 - Disabled weird invisible trigger. Disabled mag booping for weapons that dont need it (i.e. G11)
 
-1.0.3 - Fixed many sources of undeseriable mag boops. added ability to boop slinged weapons. adjusted angle logic for booping.
+1.0.3 - Fixed many sources of undeseriable mag boops. added ability to boop slinged weapons. adjusted angle logic for booping. Added check for gripping, to remove unwanted boops.
 
 1.0.2 - Updated so it actually works now.
 

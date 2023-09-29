@@ -40,11 +40,6 @@ namespace MagBoop.ModFiles
             soundCooldownTimer = SoundCooldown;
         }
 
-        public override void BeginInteraction(FVRViveHand hand)
-        {
-            ForceBreakInteraction();
-        }
-
         public override bool IsInteractable()
         {
             return false;
@@ -57,18 +52,29 @@ namespace MagBoop.ModFiles
         
         public void ReSeatMagazine()
         {
-            if (!isUnSeated) return;
-            if (_thisMagScript == null) return;
+            if (!isUnSeated)
+            {
+                Debug.Log("mag is seated");
+                return;
+            }
+
+            if (_thisMagScript == null)
+            {
+                Debug.Log("no mag script");
+                return;
+            }
 
             var magSeatedPos = _thisMagScript.FireArm.GetMagMountPos(_thisMagScript.IsBeltBox).position;
 
             if (UnityEngine.Random.Range(0f, 1f) < UserConfig.MagRequiresTwoTapsProbability.Value && !hasAlreadyTappedOnce)
             {
+                Debug.Log("sending mag halfway");
                 _thisMagScript.transform.position = Vector3.Lerp(_thisMagScript.transform.position, magSeatedPos, 0.5f);
                 hasAlreadyTappedOnce = true;
                 return;
             }
             
+            Debug.Log("send mang fulyl back");
             _thisMagScript.transform.position = magSeatedPos;
             isUnSeated = false;
             
@@ -95,6 +101,8 @@ namespace MagBoop.ModFiles
 
             var weaponRb = _thisMagScript.FireArm.RootRigidbody;
             var upwardsSpeed = Vector3.Dot(handRb.velocity - weaponRb.velocity, _thisMagScript.transform.up);
+            
+            Debug.Log("velocity upwrads : " + upwardsSpeed);
 
             if (upwardsSpeed < 0) return;
             
@@ -104,14 +112,6 @@ namespace MagBoop.ModFiles
             if (upwardsSpeed > 0.015f)
                 impactIntensity = AudioImpactIntensity.Hard;
 
-            var magMat = transform.parent.GetComponent<PMat>();
-            var impactMat = MatSoundType.SoftSurface;
-            
-            // Try loads of things to find the correct material
-            if (magMat == null) magMat = handRb.GetComponent<PMat>();
-            if (magMat != null && magMat.MatDef != null) impactMat = magMat.MatDef.SoundType;
-
-            
             // Gather how loud the sound should be based on the movement of the hand.
             // If this boop is the one to make the mag fully seated, it will be lower pitch so the user knows
             
@@ -120,7 +120,7 @@ namespace MagBoop.ModFiles
             var randomPitch = 1 + UnityEngine.Random.Range(0f, PitchVariance);
             if (!isUnSeated) randomPitch *= 0.75f;
 
-            SM.PlayImpactSound(_thisController.ImpactType, impactMat, impactIntensity, transform.parent.position,
+            SM.PlayImpactSound(_thisController.ImpactType, MatSoundType.SoftSurface, impactIntensity, transform.parent.position,
                 _thisController.PoolToUse, _thisController.DistLimit, movementBasedVolume, randomPitch);
             
 

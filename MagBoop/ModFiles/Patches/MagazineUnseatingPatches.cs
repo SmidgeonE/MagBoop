@@ -27,7 +27,9 @@ namespace MagBoop.ModFiles
 
             if (Random.Range(0f, 1f) < UserConfig.MagUnseatedProbability.Value)
             {
+                Debug.Log("unseating");
                 magBoopComp.thisTrigger.isUnSeated = true;
+                Debug.Log("mag boop comp is unseated set to true");
                 magBoopComp.thisTrigger.hasStartedMagNoiseTimer = false;
                 _currentUnSeatedWeapon = fireArm;
                 magBoopComp.thisTrigger.hasAlreadyTappedOnce = false;
@@ -43,17 +45,41 @@ namespace MagBoop.ModFiles
             if (!magBoopComp.thisTrigger.isUnSeated) return;
 
             // Unseat Mag
-            
-            __instance.transform.position -= __instance.transform.up * 0.015f;
+
+            var magTransform = __instance.transform;
+            var magInsertsAboveBore = Vector3.Dot(magTransform.localPosition, __instance.FireArm.transform.up) > 0.04f;
+
+            if (magInsertsAboveBore)
+                magTransform.position += magTransform.up * 0.015f;
+            else
+                magTransform.position -= magTransform.up * 0.015f;
 
             var doubleFeedData = __instance.FireArm.GetComponent<DoubleFeedData>();
-            if (doubleFeedData == null) return;
+            if (doubleFeedData != null)
+            {
+                /*Debug.Log("increaseing double feed mutli;liers");
+                    Debug.Log("from " + doubleFeedData.doubleFeedChance);
+                    Debug.Log("to " + doubleFeedData.doubleFeedChance * UserConfig.DoubleFeedMultiplier.Value);*/
+                doubleFeedData.doubleFeedChance *= UserConfig.DoubleFeedMultiplier.Value;
+                doubleFeedData.doubleFeedMaxChance *= UserConfig.DoubleFeedMultiplier.Value;
+            }
+        }
 
-            /*Debug.Log("increaseing double feed mutli;liers");
-            Debug.Log("from " + doubleFeedData.doubleFeedChance);
-            Debug.Log("to " + doubleFeedData.doubleFeedChance * UserConfig.DoubleFeedMultiplier.Value);*/
-            doubleFeedData.doubleFeedChance *= UserConfig.DoubleFeedMultiplier.Value;
-            doubleFeedData.doubleFeedMaxChance *= UserConfig.DoubleFeedMultiplier.Value;
+        [HarmonyPatch(typeof(FVRFireArmMagazine), "Load", typeof(FVRFireArm))]
+        [HarmonyPostfix]
+        private static void AdjustPositionOfTriggerIfTopLoad(FVRFireArmMagazine __instance)
+        {
+            var magBoopComp = __instance.GetComponent<MagazineBoopComponent>();
+            if (magBoopComp is null) return;
+
+            // Unseat Mag
+
+            var magTransform = __instance.transform;
+            Debug.Log("distance above bore : " + Vector3.Dot(magTransform.localPosition, __instance.FireArm.transform.up));
+            var magInsertsAboveBore = Vector3.Dot(magTransform.localPosition, __instance.FireArm.transform.up) > 0.05f;
+
+            if (magInsertsAboveBore)
+                MagazineTriggerPatches.AddOrSwapOrientationOfImpactProxy(__instance);
         }
 
         [HarmonyPatch(typeof(FVRFireArmMagazine), "Release")]
@@ -89,10 +115,6 @@ namespace MagBoop.ModFiles
             var magBoopComp = _currentUnSeatedWeapon.Magazine.GetComponent<MagazineBoopComponent>();
             if (!magBoopComp.thisTrigger.isUnSeated) return;
             if (magBoopComp.thisTrigger.hasStartedMagNoiseTimer) return;
-
-            
-            Debug.Log("adjusting noise..");
-            Debug.Log("length : " + __instance.Source.clip.length);
             
             // Making is quieter
             __instance.Source.Stop();

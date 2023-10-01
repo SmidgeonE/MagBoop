@@ -52,29 +52,18 @@ namespace MagBoop.ModFiles
         
         public void ReSeatMagazine()
         {
-            if (!isUnSeated)
-            {
-                Debug.Log("mag is seated");
-                return;
-            }
+            if (!isUnSeated) return;
+            if (_thisMagScript == null) return;
 
-            if (_thisMagScript == null)
-            {
-                Debug.Log("no mag script");
-                return;
-            }
-
-            var magSeatedPos = _thisMagScript.FireArm.GetMagMountPos(_thisMagScript.IsBeltBox).position;
+                var magSeatedPos = _thisMagScript.FireArm.GetMagMountPos(_thisMagScript.IsBeltBox).position;
 
             if (UnityEngine.Random.Range(0f, 1f) < UserConfig.MagRequiresTwoTapsProbability.Value && !hasAlreadyTappedOnce)
             {
-                Debug.Log("sending mag halfway");
                 _thisMagScript.transform.position = Vector3.Lerp(_thisMagScript.transform.position, magSeatedPos, 0.5f);
                 hasAlreadyTappedOnce = true;
                 return;
             }
             
-            Debug.Log("send mang fulyl back");
             _thisMagScript.transform.position = magSeatedPos;
             isUnSeated = false;
             
@@ -103,9 +92,6 @@ namespace MagBoop.ModFiles
             var upwardsSpeed = Vector3.Dot(handRb.velocity - weaponRb.velocity, _thisMagScript.transform.up);
 
             if (upwardsSpeed < 0.002f) return;
-            
-            Debug.Log("velocity upwrads : " + upwardsSpeed);
-
             if (upwardsSpeed < 0) return;
             
             if (UserConfig.EnableMagUnSeating.Value) ReSeatMagazine();
@@ -121,10 +107,9 @@ namespace MagBoop.ModFiles
             var movementBasedVolume = 3f + _currentInvLerpOfSpeed * VolumeVariance;
             var randomPitch = 1 + UnityEngine.Random.Range(0f, PitchVariance);
             if (!isUnSeated) randomPitch *= 0.75f;
-
+            
             SM.PlayImpactSound(_thisController.ImpactType, MatSoundType.SoftSurface, impactIntensity, transform.parent.position,
                 _thisController.PoolToUse, _thisController.DistLimit, movementBasedVolume, randomPitch);
-            
 
             StartCooldownTimer();
         }

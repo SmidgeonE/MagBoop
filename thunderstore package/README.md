@@ -20,6 +20,11 @@ If you have any issues / ideas / need help with modding, I am always available o
 
 # Changelog
 
+1.0.8 - Removed debug cube... again...
+
+1.0.7 - If you push the magazine with a strong force, it will decrease the probability that it will not fully go in.
+ This is customisable in the config, with probabilities. Fixed many triggers on certain weapon magazines. Added correct mag boop logic for weapons that have magazines that insert above / to the side of the weapon.
+
 1.0.6 - Removed debug cube.
 
 1.0.5 - Added sound effects so its more obvious if the mag is not seated correctly. Fixed bugs with certain capsule-shaped magazines. 

@@ -68,6 +68,10 @@ namespace MagBoop.ModFiles
                 "This enables the mag tapping aspect of the mod.");
             UserConfig.EnableMagUnSeating = Config.Bind("Activation", "Enable Mag Unseating", true,
                 "This enables the mag to be unseated, based on random chance as well as how fast / hard you push the magazine in.");
+            UserConfig.EnableCustomSounds = Config.Bind("Activation", "Enable Custom Sounds", true,
+                "This enables the custom sounds, which should hopefully be better than the default sounds.");
+            UserConfig.EnableTriggerDebug = Config.Bind("Debug", "Enable Mag Debug Cubes", false,
+                "This is enables the weird white cubes where the boop trigger is located, can be used to see if the magazine you are using has it properly located.");
             
             UserConfig.MagUnseatedProbability = Config.Bind("Probabilities", "Probability of Being Unseated", 0.1f,
                 "This is the base probability that the magazine will be seated incorrectly even if you push it in with decent force.");

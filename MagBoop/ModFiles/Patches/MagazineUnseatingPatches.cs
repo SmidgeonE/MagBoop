@@ -60,10 +60,16 @@ namespace MagBoop.ModFiles
             // Unseat Mag
 
             var magTransform = __instance.transform;
-            var magInsertsAboveBore = Vector3.Dot(__instance.FireArm.GetMagMountPos(__instance.IsBeltBox).localPosition, 
-                __instance.FireArm.GetChambers()[0].transform.position) > 0.03f;
 
-            if (magInsertsAboveBore)
+            magBoopComp.insertsAboveWeapon =
+                Vector3.Dot(__instance.transform.up, __instance.FireArm.transform.up) < -0.2f;
+
+            // Check if it actually just inserts to the side...
+            
+            if (Mathf.Abs(Vector3.Dot(__instance.transform.up, __instance.FireArm.transform.right)) > 0.2f)
+                magBoopComp.insertsAboveWeapon = false;
+            
+            if (magBoopComp.insertsAboveWeapon)
                 magTransform.position += magTransform.up * 0.015f;
             else
                 magTransform.position -= magTransform.up * 0.015f;
@@ -85,16 +91,8 @@ namespace MagBoop.ModFiles
         {
             var magBoopComp = __instance.GetComponent<MagazineBoopComponent>();
             if (magBoopComp is null) return;
-
-            // Unseat Mag
             
-            var magInsertsAboveBore = __instance.transform.localPosition.y >
-                                      __instance.FireArm.GetChambers()[0].transform.localPosition.y;
-
-            if (Mathf.Abs(Vector3.Dot(__instance.transform.up, __instance.FireArm.transform.right)) > 0.1f)
-                magInsertsAboveBore = false;
-
-            if (magInsertsAboveBore)
+            if (magBoopComp.insertsAboveWeapon)
                 MagazineTriggerPatches.AddOrSwapOrientationOfImpactProxy(__instance);
         }
 

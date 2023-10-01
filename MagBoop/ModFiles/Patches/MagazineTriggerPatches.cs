@@ -45,11 +45,15 @@ namespace MagBoop.ModFiles
 
             var topOrBottomCol = FindLowestCollider(__instance);
 
+            if (topOrBottomCol == null)
+            {
+                Debug.Log("No magboop trigger could be identified for " + __instance.name);
+                return;
+            }
+
             var alreadyMadeTrigger = __instance.transform.FindChild("MagBoopObj");
             if (alreadyMadeTrigger != null)
             {
-                Debug.Log("Changing trigger to highest point.");
-                
                 UnityEngine.Object.Destroy(alreadyMadeTrigger.gameObject);
                 topOrBottomCol = FindHighestCollider(__instance);
                 __instance.GetComponent<MagazineBoopComponent>().hasAlreadyAdjustedTrigger = true;
@@ -65,14 +69,13 @@ namespace MagBoop.ModFiles
                 
                 if (magCollider is CapsuleCollider) GenerateCapsuleMagazineTrigger(__instance, triggerCol, interactionObj);
                 else if (magCollider is SphereCollider) GenerateSphereMagazineTrigger(__instance, triggerCol, interactionObj);
-                
-                GenerateDebugCube(interactionObj, triggerCol);
 
+                if (UserConfig.EnableTriggerDebug.Value) GenerateDebugCube(interactionObj, triggerCol);
                 return;
             }
 
             GenerateBoxMagazineTrigger(triggerCol, magBoxCollider.size, interactionObj, magBoopComp, topOrBottomCol);
-            GenerateDebugCube(interactionObj, triggerCol);
+            if (UserConfig.EnableTriggerDebug.Value) GenerateDebugCube(interactionObj, triggerCol);
         }
 
         private static void GenerateBoxMagazineTrigger(BoxCollider triggerCol, Vector3 magSize, 
@@ -189,7 +192,7 @@ namespace MagBoop.ModFiles
                     currentBottomCollider = collider;
             }
 
-            return currentBottomCollider ? currentBottomCollider : new BoxCollider();
+            return currentBottomCollider;
         }
         
         private static BoxCollider FindHighestCollider(FVRFireArmMagazine mag)
@@ -199,7 +202,6 @@ namespace MagBoop.ModFiles
 
             foreach (var collider in colliders)
             {
-                if (collider.transform == mag.transform) continue;
                 if (currentTopCollider is null)
                 {
                     currentTopCollider = collider;
@@ -212,7 +214,7 @@ namespace MagBoop.ModFiles
             
             if (currentTopCollider != null) Debug.Log("name of highest collider + " + currentTopCollider.name);
 
-            return currentTopCollider ? currentTopCollider : new BoxCollider();
+            return currentTopCollider;
         }
     }
 }

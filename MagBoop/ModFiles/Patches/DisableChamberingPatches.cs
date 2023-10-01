@@ -42,7 +42,7 @@ namespace MagBoop.ModFiles
             return true;
         }
         
-        [HarmonyPatch(typeof(OpenBoltReceiverBolt), "BoltEvent_BeginChambering")]
+        [HarmonyPatch(typeof(OpenBoltReceiverBolt), "BoltEvent_BeginChamberingf")]
         [HarmonyPrefix]
         private static bool StopFromLoadingRoundIfMagIsFullyUnSeated(OpenBoltReceiverBolt __instance)
         {

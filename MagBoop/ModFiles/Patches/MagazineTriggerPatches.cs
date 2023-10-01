@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using FistVR;
 using HarmonyLib;
 using UnityEngine;
@@ -8,6 +9,11 @@ namespace MagBoop.ModFiles
 {
     public class MagazineTriggerPatches
     {
+        private static List<string> namesOfTopLoadingWeapons = new List<string>()
+        {
+            "P90_Mag(Clone)"
+        };
+
         [HarmonyPatch(typeof(FVRFireArmMagazine), "Load", typeof(FVRFireArm))]
         [HarmonyPostfix]
         private static void StopInteractionOnMagLoad(FVRFireArmMagazine __instance)
@@ -52,7 +58,7 @@ namespace MagBoop.ModFiles
             }
 
             var alreadyMadeTrigger = __instance.transform.FindChild("MagBoopObj");
-            if (alreadyMadeTrigger != null)
+            if (alreadyMadeTrigger != null || namesOfTopLoadingWeapons.Contains(__instance.gameObject.name))
             {
                 UnityEngine.Object.Destroy(alreadyMadeTrigger.gameObject);
                 topOrBottomCol = FindHighestCollider(__instance);

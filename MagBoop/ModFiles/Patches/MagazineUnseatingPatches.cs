@@ -128,16 +128,23 @@ namespace MagBoop.ModFiles
 
             var magBoopComp = _currentUnSeatedWeapon.Magazine.GetComponent<MagazineBoopComponent>();
             if (!magBoopComp.thisTrigger.isUnSeated) return;
-            if (magBoopComp.thisTrigger.hasStartedMagNoiseTimer) return;
             
-            // Making is quieter
-            __instance.Source.Stop();
-            __instance.Source.volume *= 0.8f;
-            __instance.Source.Play();
+            // This is the first boop noise, the very short one
             
-            // Making it stop sooner
-            MagBoopManager.StartMagNoiseTimer(__instance, 0.12f);
-            magBoopComp.thisTrigger.hasStartedMagNoiseTimer = true;
+            if (magBoopComp.thisTrigger.hasStartedMagNoiseTimer)
+            {
+                // Making is quieter
+                __instance.Source.Stop();
+                __instance.Source.volume *= 0.8f;
+                __instance.Source.Play();
+                
+                // Making it stop sooner
+                MagBoopManager.StartMagNoiseTimer(__instance, 0.12f);
+                magBoopComp.thisTrigger.hasStartedMagNoiseTimer = true;
+            }
+            
+            
+            
         }
 
 

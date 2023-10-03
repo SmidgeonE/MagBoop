@@ -160,7 +160,19 @@ namespace MagBoop.ModFiles
 
                 if (Vector3.Dot(col.relativeVelocity, contactCols[0].transform.position) <= 0f) return;
                     
+                // Re seat mag and play appropriate noise
+                
                 boopComp.thisTrigger.ReSeatMagazine();
+                
+                if (UserConfig.UseOldSounds.Value || boopComp.thisTrigger.isUnSeated)
+                    SM.PlayImpactSound(boopComp.thisTrigger.thisController.ImpactType, MatSoundType.SoftSurface,
+                        AudioImpactIntensity.Hard, boopComp.thisTrigger.thisMagScript.FireArm.transform.position,
+                        boopComp.thisTrigger.thisController.PoolToUse, boopComp.thisTrigger.thisController.DistLimit, 
+                        1f, 1f);
+                else
+                    boopComp.thisTrigger.PlayEndOfMagInsertionNoise(1f + 
+                                                                    Random.Range(0f, TriggerProxyScript.PitchVariance));
+
                 return;
             }
         }

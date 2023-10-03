@@ -23,8 +23,12 @@ namespace MagBoop.ModFiles
 
         public const float SoundCooldown = 0.2f;
         public float soundCooldownTimer;
+        
+        private float timeTillResetAudioTimer;
+        private FVRPooledAudioSource pooledAudioSource;
+        private bool hasResetAudioTimer;
+        
         public bool hasAlreadyTappedOnce;
-        public bool needsToFinishReloadSound;
 
         protected override void Start()
         {
@@ -49,6 +53,15 @@ namespace MagBoop.ModFiles
         private void Update()
         {
             if (soundCooldownTimer > 0) soundCooldownTimer -= Time.fixedDeltaTime;
+
+
+            if (timeTillResetAudioTimer > 0f) timeTillResetAudioTimer -= Time.fixedDeltaTime;
+            else if (!hasResetAudioTimer)
+            {
+                Debug.Log("resetting clip");
+                pooledAudioSource.Source.time = 0f;
+                hasResetAudioTimer = true;
+            }
         }
         
         public void ReSeatMagazine()
@@ -56,7 +69,7 @@ namespace MagBoop.ModFiles
             if (!isUnSeated) return;
             if (_thisMagScript == null) return;
 
-                var magSeatedPos = _thisMagScript.FireArm.GetMagMountPos(_thisMagScript.IsBeltBox).position;
+            var magSeatedPos = _thisMagScript.FireArm.GetMagMountPos(_thisMagScript.IsBeltBox).position;
 
             if (UnityEngine.Random.Range(0f, 1f) < UserConfig.MagRequiresTwoTapsProbability.Value && !hasAlreadyTappedOnce)
             {
@@ -110,7 +123,23 @@ namespace MagBoop.ModFiles
             
             if (!isUnSeated)
             {
-                needsToFinishReloadSound = true;
+                Debug.Log("");
+                Debug.Log("a");
+
+                if (_thisMagScript.ProfileOverride == null)
+                    pooledAudioSource = _thisMagScript.FireArm.PlayAudioAsHandling(_thisMagScript.Profile.MagazineIn, 
+                        _thisMagScript.FireArm.transform.position);
+                else
+                    pooledAudioSource = _thisMagScript.FireArm.PlayAudioAsHandling(_thisMagScript.ProfileOverride.MagazineIn, 
+                        _thisMagScript.FireArm.transform.position);
+                
+                Debug.Log(pooledAudioSource.Source.clip.length);
+                pooledAudioSource.Source.Stop();
+                pooledAudioSource.Source.time = 0.12f;
+                pooledAudioSource.Source.Play();
+                
+                timeTillResetAudioTimer = pooledAudioSource.Source.clip.length - 0.1f;
+                hasResetAudioTimer = false;
             }
             else
             {

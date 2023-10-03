@@ -110,7 +110,6 @@ namespace MagBoop.ModFiles
             if (!magBoopComp.thisTrigger.isUnSeated) return;
 
             magBoopComp.thisTrigger.isUnSeated = false;
-            magBoopComp.thisTrigger.needsToFinishReloadSound = false;
 
             var doubleFeedData = __instance.FireArm.GetComponent<DoubleFeedData>();
             if (doubleFeedData is null) return;
@@ -121,12 +120,13 @@ namespace MagBoop.ModFiles
 
         [HarmonyPatch(typeof(FVRPooledAudioSource), "Play")]
         [HarmonyPostfix]
-        private static void MagInsertionNoiseAlteration(FVRPooledAudioSource __instance, Vector3 pos)
+        private static void MagInsertionNoiseAlteration(FVRPooledAudioSource __instance, Vector3 pos, 
+            AudioEvent audioEvent)
         {
             if (_currentUnSeatedWeapon == null) return;
             if (pos != _currentUnSeatedWeapon.transform.position) return;
             if (_currentUnSeatedWeapon.Magazine == null) return;
-
+            
             var magBoopComp = _currentUnSeatedWeapon.Magazine.GetComponent<MagazineBoopComponent>();
 
             // This is the first boop noise, the very short one
@@ -143,28 +143,7 @@ namespace MagBoop.ModFiles
                 MagBoopManager.StartMagNoiseTimer(__instance, 0.12f);
                 magBoopComp.thisTrigger.hasStartedMagNoiseTimer = true;
             }
-            
-            else if (magBoopComp.thisTrigger.needsToFinishReloadSound && !magBoopComp.thisTrigger.isUnSeated)
-            {
-                Debug.Log("playing final reload sound");
-                
-                // Play reload sound
-                if (magBoopComp.reloadClip != null)
-                {
-                    Debug.Log("a");
-                    __instance.Source.Stop();
-                    Debug.Log("b");
-                    __instance.Source.clip = magBoopComp.reloadClip;
-                    Debug.Log("c");
-                    __instance.Source.time = 0.12f;
-                    Debug.Log("d");
-                    __instance.Source.Play();
-                }
-
-                magBoopComp.thisTrigger.needsToFinishReloadSound = false;
-            }
         }
-
 
         [HarmonyPatch(typeof(AudioImpactController), "ProcessCollision")]
         [HarmonyPostfix]

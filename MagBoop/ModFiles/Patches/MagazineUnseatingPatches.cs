@@ -36,10 +36,10 @@ namespace MagBoop.ModFiles
             const float slowSpeed = 0.02f;
             const float quickSpeed = 0.2f;
 
-            var speedLerp = Mathf.InverseLerp(slowSpeed, quickSpeed, magSpeedRelativeToWeapon);
+            var speedLerp = Mathf.InverseLerp(slowSpeed, quickSpeed, Mathf.Abs(magSpeedRelativeToWeapon));
             var lerpedProbability = Mathf.Lerp(UserConfig.SlowSpeedUnseatingProbability.Value,
                 UserConfig.MagUnseatedProbability.Value, speedLerp);
-
+            
             if (Random.Range(0f, 1f) < lerpedProbability)
             {
                 magBoopComp.thisTrigger.isUnSeated = true;
@@ -61,15 +61,20 @@ namespace MagBoop.ModFiles
 
             var magTransform = __instance.transform;
 
-            magBoopComp.insertsAboveWeapon =
+            magBoopComp.thisTrigger.insertsAboveWeapon =
                 Vector3.Dot(__instance.transform.up, __instance.FireArm.transform.up) < -0.2f;
+            
+            // Check if it is physically above the weapon..
+
+            if (magBoopComp.thisTrigger.insertsAboveWeapon == false)
+                magBoopComp.thisTrigger.insertsAboveWeapon = __instance.transform.localPosition.y > 0.004f;
 
             // Check if it actually just inserts to the side...
             
             if (Mathf.Abs(Vector3.Dot(__instance.transform.up, __instance.FireArm.transform.right)) > 0.2f)
-                magBoopComp.insertsAboveWeapon = false;
+                magBoopComp.thisTrigger.insertsAboveWeapon = false;
             
-            if (magBoopComp.insertsAboveWeapon)
+            if (magBoopComp.thisTrigger.insertsAboveWeapon)
                 magTransform.position += magTransform.up * 0.015f;
             else
                 magTransform.position -= magTransform.up * 0.015f;
@@ -83,17 +88,6 @@ namespace MagBoop.ModFiles
                 doubleFeedData.doubleFeedChance *= UserConfig.DoubleFeedMultiplier.Value;
                 doubleFeedData.doubleFeedMaxChance *= UserConfig.DoubleFeedMultiplier.Value;
             }
-        }
-
-        [HarmonyPatch(typeof(FVRFireArmMagazine), "Load", typeof(FVRFireArm))]
-        [HarmonyPostfix]
-        private static void AdjustPositionOfTriggerIfTopLoad(FVRFireArmMagazine __instance)
-        {
-            var magBoopComp = __instance.GetComponent<MagazineBoopComponent>();
-            if (magBoopComp is null) return;
-            
-            if (magBoopComp.insertsAboveWeapon)
-                MagazineTriggerPatches.AddOrSwapOrientationOfImpactProxy(__instance);
         }
 
         [HarmonyPatch(typeof(FVRFireArmMagazine), "Release")]
@@ -137,8 +131,7 @@ namespace MagBoop.ModFiles
                 __instance.Source.Stop();
                 __instance.Source.volume *= 0.8f;
                 __instance.Source.Play();
-                magBoopComp.reloadClip = __instance.Source.clip;
-                
+
                 // Making it stop sooner
                 MagBoopManager.StartMagNoiseTimer(__instance, 0.12f);
                 magBoopComp.thisTrigger.hasStartedMagNoiseTimer = true;

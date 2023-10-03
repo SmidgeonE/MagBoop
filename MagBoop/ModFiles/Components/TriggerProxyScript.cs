@@ -11,7 +11,8 @@ namespace MagBoop.ModFiles
     {
         private FVRFireArmMagazine _thisMagScript;
         private AudioImpactController _thisController;
-        
+        public bool insertsAboveWeapon;
+
         private const float MinSpeed = 0.001f;
         private const float MaxSpeed = 0.05f;
         private const float VolumeVariance = 2f;
@@ -26,6 +27,7 @@ namespace MagBoop.ModFiles
         
         private float timeTillResetAudioTimer;
         private FVRPooledAudioSource pooledAudioSource;
+        private bool hasFoundPooledAudioSource;
         private bool hasResetAudioTimer;
         
         public bool hasAlreadyTappedOnce;
@@ -56,10 +58,11 @@ namespace MagBoop.ModFiles
 
 
             if (timeTillResetAudioTimer > 0f) timeTillResetAudioTimer -= Time.fixedDeltaTime;
-            else if (!hasResetAudioTimer)
+            else if (!hasResetAudioTimer && hasFoundPooledAudioSource)
             {
-                Debug.Log("resetting clip");
+                pooledAudioSource.Source.Stop();
                 pooledAudioSource.Source.time = 0f;
+                pooledAudioSource.Source.pitch = 1f;
                 hasResetAudioTimer = true;
             }
         }
@@ -67,17 +70,18 @@ namespace MagBoop.ModFiles
         public void ReSeatMagazine()
         {
             if (!isUnSeated) return;
+            
             if (_thisMagScript == null) return;
-
+            
             var magSeatedPos = _thisMagScript.FireArm.GetMagMountPos(_thisMagScript.IsBeltBox).position;
-
+            
             if (UnityEngine.Random.Range(0f, 1f) < UserConfig.MagRequiresTwoTapsProbability.Value && !hasAlreadyTappedOnce)
             {
                 _thisMagScript.transform.position = Vector3.Lerp(_thisMagScript.transform.position, magSeatedPos, 0.5f);
                 hasAlreadyTappedOnce = true;
                 return;
             }
-            
+
             _thisMagScript.transform.position = magSeatedPos;
             isUnSeated = false;
             
@@ -103,8 +107,10 @@ namespace MagBoop.ModFiles
 
 
             var weaponRb = _thisMagScript.FireArm.RootRigidbody;
-            var upwardsSpeed = Vector3.Dot(handRb.velocity - weaponRb.velocity, _thisMagScript.transform.up);
+            var upwardsSpeed = Vector3.Dot(handRb.velocity - weaponRb.velocity, _thisMagScript.FireArm.transform.up);
 
+            if (insertsAboveWeapon) upwardsSpeed *= -1;
+            
             if (upwardsSpeed < 0.002f) return;
             if (upwardsSpeed < 0) return;
             
@@ -123,9 +129,6 @@ namespace MagBoop.ModFiles
             
             if (!isUnSeated)
             {
-                Debug.Log("");
-                Debug.Log("a");
-
                 if (_thisMagScript.ProfileOverride == null)
                     pooledAudioSource = _thisMagScript.FireArm.PlayAudioAsHandling(_thisMagScript.Profile.MagazineIn, 
                         _thisMagScript.FireArm.transform.position);
@@ -133,12 +136,14 @@ namespace MagBoop.ModFiles
                     pooledAudioSource = _thisMagScript.FireArm.PlayAudioAsHandling(_thisMagScript.ProfileOverride.MagazineIn, 
                         _thisMagScript.FireArm.transform.position);
                 
-                Debug.Log(pooledAudioSource.Source.clip.length);
+                hasFoundPooledAudioSource = true;
                 pooledAudioSource.Source.Stop();
-                pooledAudioSource.Source.time = 0.12f;
+                pooledAudioSource.Source.volume = 1f;
+                pooledAudioSource.Source.time = 0.09f;
+                pooledAudioSource.Source.pitch = randomPitch;
                 pooledAudioSource.Source.Play();
                 
-                timeTillResetAudioTimer = pooledAudioSource.Source.clip.length - 0.1f;
+                timeTillResetAudioTimer = pooledAudioSource.Source.clip.length - 0.09f;
                 hasResetAudioTimer = false;
             }
             else

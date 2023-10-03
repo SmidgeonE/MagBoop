@@ -68,13 +68,6 @@ namespace MagBoop.ModFiles
             var interactionObj = GenerateInteractionObjAndAddMagDataClass(__instance, 
                 out var triggerCol, out var magBoxCollider, out var magBoopComp);
 
-
-            if (namesOfTopLoadingWeapons.Contains(__instance.gameObject.name))
-            {
-                // If the weapon is a known top loader, we can redo the method.
-                AddOrSwapOrientationOfImpactProxy(__instance);
-            }
-
             if (magBoxCollider == null)
             {
                 // This means it is a capsule collider or a sphere collider, if the box collider returns null
@@ -89,6 +82,17 @@ namespace MagBoop.ModFiles
 
             GenerateBoxMagazineTrigger(triggerCol, magBoxCollider.size, interactionObj, magBoopComp, topOrBottomCol);
             if (UserConfig.EnableTriggerDebug.Value) GenerateDebugCube(interactionObj, triggerCol);
+        }
+        
+        [HarmonyPatch(typeof(FVRFireArmMagazine), "Load", typeof(FVRFireArm))]
+        [HarmonyPostfix]
+        private static void AdjustPositionOfTriggerIfTopLoad(FVRFireArmMagazine __instance)
+        {
+            var magBoopComp = __instance.GetComponent<MagazineBoopComponent>();
+            if (magBoopComp is null) return;
+            
+            if (magBoopComp.thisTrigger.insertsAboveWeapon)
+                MagazineTriggerPatches.AddOrSwapOrientationOfImpactProxy(__instance);
         }
 
         private static void GenerateBoxMagazineTrigger(BoxCollider triggerCol, Vector3 magSize, 
@@ -225,8 +229,6 @@ namespace MagBoop.ModFiles
                     currentTopCollider = collider;
             }
             
-            if (currentTopCollider != null) Debug.Log("name of highest collider + " + currentTopCollider.name);
-
             return currentTopCollider;
         }
     }

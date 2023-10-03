@@ -7,7 +7,7 @@ using Valve.VR;
 
 namespace MagBoop.ModFiles
 {
-    [BepInPlugin("dll.smidgeon.magboop", "Mag Boop", "1.0.0")]
+    [BepInPlugin("dll.smidgeon.magboop", "Mag Boop", "1.1.0")]
     [BepInProcess("h3vr.exe")]
     public class MagBoopManager : BaseUnityPlugin
     {

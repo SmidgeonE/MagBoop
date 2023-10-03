@@ -62,6 +62,8 @@ namespace MagBoop.ModFiles
 
         private void ResetAudioAndAudioTimer()
         {
+            if (_pooledAudioSource == null) return;
+            
             _pooledAudioSource.Source.Stop();
             _pooledAudioSource.Source.time = 0f;
             _pooledAudioSource.Source.pitch = 1f;

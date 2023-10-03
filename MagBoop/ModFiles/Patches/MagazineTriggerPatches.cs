@@ -110,7 +110,7 @@ namespace MagBoop.ModFiles
             GameObject interactionObj, MagazineBoopComponent magBoopComp, BoxCollider topOrBottomCol)
         {
             triggerCol.center = Vector3.zero;
-            triggerCol.size = new Vector3(magSize.x, 0.03f, magSize.z);
+            triggerCol.size = new Vector3(magSize.x, 0.04f, magSize.z);
             triggerCol.isTrigger = true;
             
             // Now using the lowest mesh collider, we can set the local pos + rotation of the trigger object

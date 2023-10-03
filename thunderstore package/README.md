@@ -20,6 +20,8 @@ If you have any issues / ideas / need help with modding, I am always available o
 
 # Changelog
 
+1.1.0 - Added buzz when mag booping. Added user customisable probabilities based on weapon type. Added better (hopefully) sounds. Added sounds for environment boops. Slightly increased trigger size. Fixed many issues with top-loading weapons. 
+
 1.0.8 - Removed debug cube... again...
 
 1.0.7 - If you push the magazine with a strong force, it will decrease the probability that it will not fully go in.

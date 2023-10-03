@@ -58,7 +58,7 @@ namespace MagBoop.ModFiles
             }
 
             var alreadyMadeTrigger = __instance.transform.FindChild("MagBoopObj");
-            if (alreadyMadeTrigger != null || namesOfTopLoadingWeapons.Contains(__instance.gameObject.name))
+            if (alreadyMadeTrigger != null)
             {
                 UnityEngine.Object.Destroy(alreadyMadeTrigger.gameObject);
                 topOrBottomCol = FindHighestCollider(__instance);
@@ -67,6 +67,13 @@ namespace MagBoop.ModFiles
 
             var interactionObj = GenerateInteractionObjAndAddMagDataClass(__instance, 
                 out var triggerCol, out var magBoxCollider, out var magBoopComp);
+
+
+            if (namesOfTopLoadingWeapons.Contains(__instance.gameObject.name))
+            {
+                // If the weapon is a known top loader, we can redo the method.
+                AddOrSwapOrientationOfImpactProxy(__instance);
+            }
 
             if (magBoxCollider == null)
             {

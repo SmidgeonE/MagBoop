@@ -110,6 +110,7 @@ namespace MagBoop.ModFiles
             if (!magBoopComp.thisTrigger.isUnSeated) return;
 
             magBoopComp.thisTrigger.isUnSeated = false;
+            magBoopComp.thisTrigger.needsToFinishReloadSound = false;
 
             var doubleFeedData = __instance.FireArm.GetComponent<DoubleFeedData>();
             if (doubleFeedData is null) return;
@@ -127,24 +128,41 @@ namespace MagBoop.ModFiles
             if (_currentUnSeatedWeapon.Magazine == null) return;
 
             var magBoopComp = _currentUnSeatedWeapon.Magazine.GetComponent<MagazineBoopComponent>();
-            if (!magBoopComp.thisTrigger.isUnSeated) return;
-            
+
             // This is the first boop noise, the very short one
             
-            if (magBoopComp.thisTrigger.hasStartedMagNoiseTimer)
+            if (!magBoopComp.thisTrigger.hasStartedMagNoiseTimer && magBoopComp.thisTrigger.isUnSeated)
             {
                 // Making is quieter
                 __instance.Source.Stop();
                 __instance.Source.volume *= 0.8f;
                 __instance.Source.Play();
+                magBoopComp.reloadClip = __instance.Source.clip;
                 
                 // Making it stop sooner
                 MagBoopManager.StartMagNoiseTimer(__instance, 0.12f);
                 magBoopComp.thisTrigger.hasStartedMagNoiseTimer = true;
             }
             
-            
-            
+            else if (magBoopComp.thisTrigger.needsToFinishReloadSound && !magBoopComp.thisTrigger.isUnSeated)
+            {
+                Debug.Log("playing final reload sound");
+                
+                // Play reload sound
+                if (magBoopComp.reloadClip != null)
+                {
+                    Debug.Log("a");
+                    __instance.Source.Stop();
+                    Debug.Log("b");
+                    __instance.Source.clip = magBoopComp.reloadClip;
+                    Debug.Log("c");
+                    __instance.Source.time = 0.12f;
+                    Debug.Log("d");
+                    __instance.Source.Play();
+                }
+
+                magBoopComp.thisTrigger.needsToFinishReloadSound = false;
+            }
         }
 
 

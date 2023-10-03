@@ -24,6 +24,7 @@ namespace MagBoop.ModFiles
         public const float SoundCooldown = 0.2f;
         public float soundCooldownTimer;
         public bool hasAlreadyTappedOnce;
+        public bool needsToFinishReloadSound;
 
         protected override void Start()
         {
@@ -106,10 +107,16 @@ namespace MagBoop.ModFiles
             _currentInvLerpOfSpeed = Mathf.InverseLerp(MinSpeed, MaxSpeed, upwardsSpeed);
             var movementBasedVolume = 3f + _currentInvLerpOfSpeed * VolumeVariance;
             var randomPitch = 1 + UnityEngine.Random.Range(0f, PitchVariance);
-            if (!isUnSeated) randomPitch *= 0.75f;
             
-            SM.PlayImpactSound(_thisController.ImpactType, MatSoundType.SoftSurface, impactIntensity, transform.parent.position,
-                _thisController.PoolToUse, _thisController.DistLimit, movementBasedVolume, randomPitch);
+            if (!isUnSeated)
+            {
+                needsToFinishReloadSound = true;
+            }
+            else
+            {
+                SM.PlayImpactSound(_thisController.ImpactType, MatSoundType.SoftSurface, impactIntensity, transform.parent.position,
+                    _thisController.PoolToUse, _thisController.DistLimit, movementBasedVolume, randomPitch);
+            }
 
             StartCooldownTimer();
         }

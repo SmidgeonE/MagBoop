@@ -7,5 +7,6 @@ namespace MagBoop.ModFiles
         public TriggerProxyScript thisTrigger;
         public bool hasAlreadyAdjustedTrigger;
         public bool insertsAboveWeapon;
+        public AudioClip reloadClip;
     }
 }

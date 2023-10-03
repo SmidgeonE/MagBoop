@@ -94,16 +94,10 @@ namespace MagBoop.ModFiles
         [HarmonyPatch(typeof(FVRFireArmMagazine), "ReleaseFromAttachableFireArm")]
         [HarmonyPatch(typeof(FVRFireArmMagazine), "ReleaseFromSecondarySlot")]
         [HarmonyPrefix]
-        private static void StopMagReleasingMakingSoundAndReducingDoubleFeed(FVRFireArmMagazine __instance)
+        private static void ReduceDoubleFeedMultsIfReleasedMag(FVRFireArmMagazine __instance)
         {
             var magBoopComp = __instance.GetComponent<MagazineBoopComponent>();
             if (magBoopComp is null) return;
-
-            magBoopComp.thisTrigger.StartCooldownTimer();
-
-            if (!magBoopComp.thisTrigger.isUnSeated) return;
-
-            magBoopComp.thisTrigger.isUnSeated = false;
 
             var doubleFeedData = __instance.FireArm.GetComponent<DoubleFeedData>();
             if (doubleFeedData is null) return;

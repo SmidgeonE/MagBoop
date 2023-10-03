@@ -9,19 +9,30 @@ namespace MagBoop.ModFiles
 {
     public class MagazineTriggerPatches
     {
-        private static List<string> namesOfTopLoadingWeapons = new List<string>()
-        {
-            "P90_Mag(Clone)"
-        };
-
         [HarmonyPatch(typeof(FVRFireArmMagazine), "Load", typeof(FVRFireArm))]
         [HarmonyPostfix]
-        private static void StopInteractionOnMagLoad(FVRFireArmMagazine __instance)
+        private static void StopFromBoopingOnMagLoad(FVRFireArmMagazine __instance)
         {
             var magBoopComp = __instance.GetComponent<MagazineBoopComponent>();
             if (magBoopComp is null) return;
             
             magBoopComp.thisTrigger.StartCooldownTimer();
+        }
+        
+        [HarmonyPatch(typeof(FVRFireArmMagazine), "Release")]
+        [HarmonyPatch(typeof(FVRFireArmMagazine), "ReleaseFromAttachableFireArm")]
+        [HarmonyPatch(typeof(FVRFireArmMagazine), "ReleaseFromSecondarySlot")]
+        [HarmonyPrefix]
+        private static void StopFromBoopingAfterMagRelease(FVRFireArmMagazine __instance)
+        {
+            var magBoopComp = __instance.GetComponent<MagazineBoopComponent>();
+            if (magBoopComp is null) return;
+
+            magBoopComp.thisTrigger.StartCooldownTimer();
+
+            if (!magBoopComp.thisTrigger.isUnSeated) return;
+
+            magBoopComp.thisTrigger.isUnSeated = false;
         }
 
         [HarmonyPatch(typeof(FVRFireArm), "Fire")]
@@ -92,7 +103,7 @@ namespace MagBoop.ModFiles
             if (magBoopComp is null) return;
             
             if (magBoopComp.thisTrigger.insertsAboveWeapon)
-                MagazineTriggerPatches.AddOrSwapOrientationOfImpactProxy(__instance);
+                AddOrSwapOrientationOfImpactProxy(__instance);
         }
 
         private static void GenerateBoxMagazineTrigger(BoxCollider triggerCol, Vector3 magSize, 

@@ -25,10 +25,10 @@ namespace MagBoop.ModFiles
         public const float SoundCooldown = 0.2f;
         public float soundCooldownTimer;
         
-        private float timeTillResetAudioTimer;
-        private FVRPooledAudioSource pooledAudioSource;
-        private bool hasFoundPooledAudioSource;
-        private bool hasResetAudioTimer;
+        private float _timeTillResetAudioTimer;
+        private FVRPooledAudioSource _pooledAudioSource;
+        private bool _hasFoundPooledAudioSource;
+        private bool _hasResetAudioTimer;
         
         public bool hasAlreadyTappedOnce;
 
@@ -55,28 +55,30 @@ namespace MagBoop.ModFiles
         private void Update()
         {
             if (soundCooldownTimer > 0) soundCooldownTimer -= Time.fixedDeltaTime;
-
-
-            if (timeTillResetAudioTimer > 0f) timeTillResetAudioTimer -= Time.fixedDeltaTime;
-            else if (!hasResetAudioTimer && hasFoundPooledAudioSource)
-            {
-                pooledAudioSource.Source.Stop();
-                pooledAudioSource.Source.time = 0f;
-                pooledAudioSource.Source.pitch = 1f;
-                hasResetAudioTimer = true;
-            }
+            
+            if (_timeTillResetAudioTimer > 0f) _timeTillResetAudioTimer -= Time.fixedDeltaTime;
+            else if (!_hasResetAudioTimer && _hasFoundPooledAudioSource) ResetAudioAndAudioTimer();
         }
-        
+
+        private void ResetAudioAndAudioTimer()
+        {
+            _pooledAudioSource.Source.Stop();
+            _pooledAudioSource.Source.time = 0f;
+            _pooledAudioSource.Source.pitch = 1f;
+            _hasResetAudioTimer = true;
+        }
+
         public void ReSeatMagazine()
         {
             if (!isUnSeated) return;
-            
             if (_thisMagScript == null) return;
             
             var magSeatedPos = _thisMagScript.FireArm.GetMagMountPos(_thisMagScript.IsBeltBox).position;
             
             if (UnityEngine.Random.Range(0f, 1f) < UserConfig.MagRequiresTwoTapsProbability.Value && !hasAlreadyTappedOnce)
             {
+                // This is the half-way mag boop
+                
                 _thisMagScript.transform.position = Vector3.Lerp(_thisMagScript.transform.position, magSeatedPos, 0.5f);
                 hasAlreadyTappedOnce = true;
                 return;
@@ -85,10 +87,11 @@ namespace MagBoop.ModFiles
             _thisMagScript.transform.position = magSeatedPos;
             isUnSeated = false;
             
+            // If double feed data can be found, we reduce the double feed chance again
+            
             var doubleFeedData = _thisMagScript.FireArm.GetComponent<DoubleFeedData>();
             if (doubleFeedData == null) return;
             
-            /*Debug.Log("reduing duble feed multiplier");*/
             doubleFeedData.doubleFeedChance /= UserConfig.DoubleFeedMultiplier.Value;
             doubleFeedData.doubleFeedMaxChance /= UserConfig.DoubleFeedMultiplier.Value;
         }
@@ -126,33 +129,34 @@ namespace MagBoop.ModFiles
             _currentInvLerpOfSpeed = Mathf.InverseLerp(MinSpeed, MaxSpeed, upwardsSpeed);
             var movementBasedVolume = 3f + _currentInvLerpOfSpeed * VolumeVariance;
             var randomPitch = 1 + UnityEngine.Random.Range(0f, PitchVariance);
-            
-            if (!isUnSeated)
-            {
-                if (_thisMagScript.ProfileOverride == null)
-                    pooledAudioSource = _thisMagScript.FireArm.PlayAudioAsHandling(_thisMagScript.Profile.MagazineIn, 
-                        _thisMagScript.FireArm.transform.position);
-                else
-                    pooledAudioSource = _thisMagScript.FireArm.PlayAudioAsHandling(_thisMagScript.ProfileOverride.MagazineIn, 
-                        _thisMagScript.FireArm.transform.position);
-                
-                hasFoundPooledAudioSource = true;
-                pooledAudioSource.Source.Stop();
-                pooledAudioSource.Source.volume = 1f;
-                pooledAudioSource.Source.time = 0.09f;
-                pooledAudioSource.Source.pitch = randomPitch;
-                pooledAudioSource.Source.Play();
-                
-                timeTillResetAudioTimer = pooledAudioSource.Source.clip.length - 0.09f;
-                hasResetAudioTimer = false;
-            }
-            else
-            {
+
+            if (UserConfig.UseOldSounds.Value || isUnSeated)
                 SM.PlayImpactSound(_thisController.ImpactType, MatSoundType.SoftSurface, impactIntensity, transform.parent.position,
                     _thisController.PoolToUse, _thisController.DistLimit, movementBasedVolume, randomPitch);
-            }
+            else
+                PlayEndOfMagInsertionNoise(randomPitch);
 
             StartCooldownTimer();
+        }
+
+        private void PlayEndOfMagInsertionNoise(float randomPitch)
+        {
+            if (_thisMagScript.ProfileOverride == null)
+                _pooledAudioSource = _thisMagScript.FireArm.PlayAudioAsHandling(_thisMagScript.Profile.MagazineIn,
+                    _thisMagScript.FireArm.transform.position);
+            else
+                _pooledAudioSource = _thisMagScript.FireArm.PlayAudioAsHandling(_thisMagScript.ProfileOverride.MagazineIn,
+                    _thisMagScript.FireArm.transform.position);
+
+            _hasFoundPooledAudioSource = true;
+            _pooledAudioSource.Source.Stop();
+            _pooledAudioSource.Source.volume = 1f;
+            _pooledAudioSource.Source.time = 0.09f;
+            _pooledAudioSource.Source.pitch = randomPitch;
+            _pooledAudioSource.Source.Play();
+
+            _timeTillResetAudioTimer = _pooledAudioSource.Source.clip.length - 0.09f;
+            _hasResetAudioTimer = false;
         }
     }
 }

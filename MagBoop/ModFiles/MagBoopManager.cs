@@ -33,15 +33,6 @@ namespace MagBoop.ModFiles
             }
         }
 
-        public static void StartMagNoiseTimer(FVRPooledAudioSource source, float time)
-        {
-            _currentMagSoundSource = source;
-            _timeLeft = time;
-            _hasStoppedSound = false;
-            _timeUntilFadeOut = time / 2f;
-            _defaultMagSoundVolume = source.Source.volume;
-        }
-
         private void Update()
         {
             // This update function allows the mag sound to be shortened if it has been unseated.
@@ -81,6 +72,18 @@ namespace MagBoop.ModFiles
                 "This is the multiplier applied to the double feeding chance of a weapon that has a magazine which isn't seated properly.");
             UserConfig.MagRequiresTwoTapsProbability = Config.Bind("Probabilities", "Magazine Requires Two Taps Probability", 0.3f,
                 "This is the probability a single tap will not fully seat the magazine back into place.");
+            
+            UserConfig.UseOldSounds = Config.Bind("Old Sounds", "Use Old Sounds", false,
+                "This enables the old sounds.");
+        }
+        
+        public static void StartMagNoiseTimer(FVRPooledAudioSource source, float time)
+        {
+            _currentMagSoundSource = source;
+            _timeLeft = time;
+            _hasStoppedSound = false;
+            _timeUntilFadeOut = time / 2f;
+            _defaultMagSoundVolume = source.Source.volume;
         }
     }
 }

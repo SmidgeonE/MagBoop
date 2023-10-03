@@ -18,5 +18,7 @@ namespace MagBoop.ModFiles
 
         public static ConfigEntry<float> DoubleFeedMultiplier;
         public static ConfigEntry<float> MagRequiresTwoTapsProbability;
+
+        public static ConfigEntry<bool> UseOldSounds;
     }
 }

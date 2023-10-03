@@ -26,7 +26,28 @@ namespace MagBoop.ModFiles
             if (magBoopComp.thisTrigger.isUnSeated) return;
 
             
+            // Grabbing user defined probability modifiers...
+            var weaponTypeProbabilityModifier = 1f;
+
+            switch (fireArm)
+            {
+                case Handgun _:
+                    weaponTypeProbabilityModifier = UserConfig.HandgunProbability.Value;
+                    break;
+                case OpenBoltReceiver _:
+                    weaponTypeProbabilityModifier = UserConfig.OpenBoltProbability.Value;
+                    break;
+                case ClosedBoltWeapon _:
+                    weaponTypeProbabilityModifier = UserConfig.ClosedBoltProbability.Value;
+                    break;
+                case TubeFedShotgun _:
+                    weaponTypeProbabilityModifier = UserConfig.TubeFedShotgunProbability.Value;
+                    break;
+            }
+            
+            
             // Modulating the probability based on the speed of insertion
+            
             var hand = __instance.m_hand;
             if (hand is null) return;
             
@@ -40,7 +61,7 @@ namespace MagBoop.ModFiles
             var lerpedProbability = Mathf.Lerp(UserConfig.SlowSpeedUnseatingProbability.Value,
                 UserConfig.MagUnseatedProbability.Value, speedLerp);
             
-            if (Random.Range(0f, 1f) < lerpedProbability)
+            if (Random.Range(0f, 1f) < lerpedProbability * weaponTypeProbabilityModifier)
             {
                 magBoopComp.thisTrigger.isUnSeated = true;
                 magBoopComp.thisTrigger.hasStartedMagNoiseTimer = false;

@@ -20,5 +20,10 @@ namespace MagBoop.ModFiles
         public static ConfigEntry<float> MagRequiresTwoTapsProbability;
 
         public static ConfigEntry<bool> UseOldSounds;
+
+        public static ConfigEntry<float> HandgunProbability;
+        public static ConfigEntry<float> ClosedBoltProbability;
+        public static ConfigEntry<float> OpenBoltProbability;
+        public static ConfigEntry<float> TubeFedShotgunProbability;
     }
 }

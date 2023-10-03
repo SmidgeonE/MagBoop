@@ -75,6 +75,15 @@ namespace MagBoop.ModFiles
             
             UserConfig.UseOldSounds = Config.Bind("Old Sounds", "Use Old Sounds", false,
                 "This enables the old sounds.");
+            
+            UserConfig.HandgunProbability = Config.Bind("Specific Weapon Type Probabilities", "Handgun", 0.5f,
+                "This is a modifier for how often the mag should be unseated for each type of weapon.");
+            UserConfig.OpenBoltProbability = Config.Bind("Specific Weapon Type Probabilities", "Open Bolt", 1f,
+                "This is a modifier for how often the mag should be unseated for each type of weapon.");
+            UserConfig.ClosedBoltProbability = Config.Bind("Specific Weapon Type Probabilities", "Closed Bolt", 1f,
+                "This is a modifier for how often the mag should be unseated for each type of weapon.");
+            UserConfig.TubeFedShotgunProbability = Config.Bind("Specific Weapon Type Probabilities", "Tube Fed Shotguns", 1f,
+                "This is a modifier for how often the mag should be unseated for each type of weapon.");
         }
         
         public static void StartMagNoiseTimer(FVRPooledAudioSource source, float time)

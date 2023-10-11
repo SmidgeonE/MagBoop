@@ -20,12 +20,15 @@ namespace MagBoop.ModFiles
         {
             if (!__instance.IsExtractable) return;
             if (__instance.IsEnBloc) return;
-
+            
+            // For now we remove ak-pattern weapons from the pool...
+            
+            if (fireArm is ClosedBoltWeapon cb && cb.Bolt.UsesAKSafetyLock) return;
+            
             var magBoopComp = __instance.GetComponent<MagazineBoopComponent>();
             if (magBoopComp is null) return;
             if (magBoopComp.thisTrigger.isUnSeated) return;
 
-            
             // Grabbing user defined probability modifiers...
             var weaponTypeProbabilityModifier = 1f;
 

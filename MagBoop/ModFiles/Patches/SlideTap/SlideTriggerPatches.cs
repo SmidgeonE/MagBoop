@@ -39,13 +39,19 @@ namespace MagBoop.ModFiles
             // Setting pos relative to slide of the trigger object
 
             var centre = Vector3.Scale(slideCollider.center, slideTransform.localScale);
-            var offsetBack = slideCollider.size.z * 0.5f * slideTransform.localScale.z - 0.01f;
-            var offsetUp = slideCollider.size.y * slideTransform.localScale.y;
+            var offsetBack = slideCollider.size.z * 0.5f * slideTransform.localScale.z - 0.02f;
 
             interactionObj.transform.position = slideTransform.position + centre
-                                                - offsetBack * slideTransform.forward
-                                                + offsetUp * slideTransform.up;
+                                                - offsetBack * slideTransform.forward;
+
             
+            // For some reason the y axis always starts wrong, this just sets it to zero
+
+            interactionObj.transform.localPosition = new Vector3(
+                interactionObj.transform.localPosition.x,
+                0, 
+                interactionObj.transform.localPosition.z);
+
             if (UserConfig.EnableTriggerDebug.Value)
                 MagazineTriggerPatches.GenerateDebugCube(interactionObj, triggerCol);
         }

@@ -16,9 +16,15 @@ namespace MagBoop.ModFiles
         
         public void CheckSlideBoop(FVRViveHand hand)
         {
+            if (slideScript.Handgun.QuickbeltSlot != null
+                && !slideScript.Handgun.IsHeld 
+                && GM.Options.MovementOptions.CurrentMovementMode == FVRMovementManager.MovementMode.Armswinger) return;
+            if (hand.CurrentInteractable != null) return;
+            if (hand.Input.GripPressed) return;
+            
             if (!(Vector3.Dot(
                     hand.GetComponent<Rigidbody>().velocity - slideScript.Handgun.RootRigidbody.velocity,
-                    transform.forward) > 0.002f)) return;
+                    transform.forward) > 0.003f)) return;
 
             hand.Buzz(hand.Buzzer.Buzz_BeginInteraction);
             var stoveData = transform.parent.GetComponent<StovepipeData>();

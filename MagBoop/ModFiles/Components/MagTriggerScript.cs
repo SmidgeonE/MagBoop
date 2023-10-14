@@ -121,6 +121,8 @@ namespace MagBoop.ModFiles
             
             if (UserConfig.EnableMagUnSeating.Value) ReSeatMagazine();
             
+            hand.Buzz(hand.Buzzer.Buzz_BeginInteraction);
+            
             var impactIntensity = AudioImpactIntensity.Medium;
             if (upwardsSpeed > 0.015f)
                 impactIntensity = AudioImpactIntensity.Hard;
@@ -149,6 +151,8 @@ namespace MagBoop.ModFiles
             else
                 _pooledAudioSource = thisMagScript.FireArm.PlayAudioAsHandling(thisMagScript.ProfileOverride.MagazineIn,
                     thisMagScript.FireArm.transform.position);
+
+            if (_pooledAudioSource is null) return;
 
             _hasFoundPooledAudioSource = true;
             _pooledAudioSource.Source.Stop();

@@ -15,14 +15,20 @@ namespace MagBoop.ModFiles
         {
             if (!isEnter) return;
             
-            var trigScript = collider.GetComponent<TriggerProxyScript>();
-            if (trigScript == null) return;
-
-            if (trigScript.transform.parent.GetComponent<FVRFireArmMagazine>().FireArm ==
-                __instance.CurrentInteractable)
-                return;
+            var magTrig = collider.GetComponent<MagTriggerScript>();
+            if (magTrig != null)
+            {
+                if (magTrig.transform.parent.GetComponent<FVRFireArmMagazine>().FireArm ==
+                    __instance.CurrentInteractable)
+                    return;
             
-            trigScript.CheckAndPlayBoopSound(__instance);
+                magTrig.CheckAndPlayBoopSound(__instance);
+                return;
+            }
+
+            
+            var slideTrig = collider.GetComponent<SlideTriggerScript>();
+            if (slideTrig != null) slideTrig.CheckSlideBoop(__instance);
         }
     }
 }

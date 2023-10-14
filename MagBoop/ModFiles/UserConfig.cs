@@ -12,6 +12,7 @@ namespace MagBoop.ModFiles
         public static ConfigEntry<bool> EnableMagUnSeating;
         public static ConfigEntry<bool> EnableCustomSounds;
         public static ConfigEntry<bool> EnableTriggerDebug;
+        public static ConfigEntry<bool> EnableSlideTapping;
 
         public static ConfigEntry<float> MagUnseatedProbability;
         public static ConfigEntry<float> SlowSpeedUnseatingProbability;

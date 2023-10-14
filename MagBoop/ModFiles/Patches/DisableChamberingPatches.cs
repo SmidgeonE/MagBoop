@@ -15,7 +15,7 @@ namespace MagBoop.ModFiles
             var magBoopComp = __instance.Weapon.Magazine.GetComponent<MagazineBoopComponent>();
             if (magBoopComp == null) return true;
 
-            if (magBoopComp.thisTrigger.isUnSeated && !magBoopComp.thisTrigger.hasAlreadyTappedOnce &&
+            if (magBoopComp.thisMagTrigger.isUnSeated && !magBoopComp.thisMagTrigger.hasAlreadyTappedOnce &&
                 UserConfig.EnableMagUnSeating.Value)
             {
                 return false;
@@ -33,7 +33,7 @@ namespace MagBoop.ModFiles
             var magBoopComp = __instance.Handgun.Magazine.GetComponent<MagazineBoopComponent>();
             if (magBoopComp == null) return true;
 
-            if (magBoopComp.thisTrigger.isUnSeated && !magBoopComp.thisTrigger.hasAlreadyTappedOnce &&
+            if (magBoopComp.thisMagTrigger.isUnSeated && !magBoopComp.thisMagTrigger.hasAlreadyTappedOnce &&
                 UserConfig.EnableMagUnSeating.Value)
             {
                 return false;
@@ -51,7 +51,7 @@ namespace MagBoop.ModFiles
             var magBoopComp = __instance.Receiver.Magazine.GetComponent<MagazineBoopComponent>();
             if (magBoopComp == null) return true;
 
-            if (magBoopComp.thisTrigger.isUnSeated && !magBoopComp.thisTrigger.hasAlreadyTappedOnce &&
+            if (magBoopComp.thisMagTrigger.isUnSeated && !magBoopComp.thisMagTrigger.hasAlreadyTappedOnce &&
                 UserConfig.EnableMagUnSeating.Value)
             {
                 return false;

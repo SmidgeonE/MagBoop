@@ -7,7 +7,7 @@ using Random = System.Random;
 
 namespace MagBoop.ModFiles
 {
-    public class TriggerProxyScript : FVRInteractiveObject
+    public class MagTriggerScript : FVRInteractiveObject
     {
         public FVRFireArmMagazine thisMagScript;
         public AudioImpactController thisController;

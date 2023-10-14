@@ -27,7 +27,7 @@ namespace MagBoop.ModFiles
             
             var magBoopComp = __instance.GetComponent<MagazineBoopComponent>();
             if (magBoopComp is null) return;
-            if (magBoopComp.thisTrigger.isUnSeated) return;
+            if (magBoopComp.thisMagTrigger.isUnSeated) return;
 
             // Grabbing user defined probability modifiers...
             var weaponTypeProbabilityModifier = 1f;
@@ -66,10 +66,10 @@ namespace MagBoop.ModFiles
             
             if (Random.Range(0f, 1f) < lerpedProbability * weaponTypeProbabilityModifier)
             {
-                magBoopComp.thisTrigger.isUnSeated = true;
-                magBoopComp.thisTrigger.hasStartedMagNoiseTimer = false;
+                magBoopComp.thisMagTrigger.isUnSeated = true;
+                magBoopComp.thisMagTrigger.hasStartedMagNoiseTimer = false;
                 _currentUnSeatedWeapon = fireArm;
-                magBoopComp.thisTrigger.hasAlreadyTappedOnce = false;
+                magBoopComp.thisMagTrigger.hasAlreadyTappedOnce = false;
             }
         }
         
@@ -79,26 +79,26 @@ namespace MagBoop.ModFiles
         {
             var magBoopComp = __instance.GetComponent<MagazineBoopComponent>();
             if (magBoopComp is null) return;
-            if (!magBoopComp.thisTrigger.isUnSeated) return;
+            if (!magBoopComp.thisMagTrigger.isUnSeated) return;
 
             // Unseat Mag
 
             var magTransform = __instance.transform;
 
-            magBoopComp.thisTrigger.insertsAboveWeapon =
+            magBoopComp.thisMagTrigger.insertsAboveWeapon =
                 Vector3.Dot(__instance.transform.up, __instance.FireArm.transform.up) < -0.2f;
             
             // Check if it is physically above the weapon..
 
-            if (magBoopComp.thisTrigger.insertsAboveWeapon == false)
-                magBoopComp.thisTrigger.insertsAboveWeapon = __instance.transform.localPosition.y > 0.004f;
+            if (magBoopComp.thisMagTrigger.insertsAboveWeapon == false)
+                magBoopComp.thisMagTrigger.insertsAboveWeapon = __instance.transform.localPosition.y > 0.004f;
 
             // Check if it actually just inserts to the side...
             
             if (Mathf.Abs(Vector3.Dot(__instance.transform.up, __instance.FireArm.transform.right)) > 0.2f)
-                magBoopComp.thisTrigger.insertsAboveWeapon = false;
+                magBoopComp.thisMagTrigger.insertsAboveWeapon = false;
             
-            if (magBoopComp.thisTrigger.insertsAboveWeapon)
+            if (magBoopComp.thisMagTrigger.insertsAboveWeapon)
                 magTransform.position += magTransform.up * 0.015f;
             else
                 magTransform.position -= magTransform.up * 0.015f;
@@ -143,7 +143,7 @@ namespace MagBoop.ModFiles
 
             // This is the first boop noise, the very short one
             
-            if (!magBoopComp.thisTrigger.hasStartedMagNoiseTimer && magBoopComp.thisTrigger.isUnSeated)
+            if (!magBoopComp.thisMagTrigger.hasStartedMagNoiseTimer && magBoopComp.thisMagTrigger.isUnSeated)
             {
                 // Making is quieter
                 __instance.Source.Stop();
@@ -152,7 +152,7 @@ namespace MagBoop.ModFiles
 
                 // Making it stop sooner
                 MagBoopManager.StartMagNoiseTimer(__instance, 0.12f);
-                magBoopComp.thisTrigger.hasStartedMagNoiseTimer = true;
+                magBoopComp.thisMagTrigger.hasStartedMagNoiseTimer = true;
             }
         }
 
@@ -186,16 +186,16 @@ namespace MagBoop.ModFiles
                     
                 // Re seat mag and play appropriate noise
                 
-                boopComp.thisTrigger.ReSeatMagazine();
+                boopComp.thisMagTrigger.ReSeatMagazine();
                 
-                if (UserConfig.UseOldSounds.Value || boopComp.thisTrigger.isUnSeated)
-                    SM.PlayImpactSound(boopComp.thisTrigger.thisController.ImpactType, MatSoundType.SoftSurface,
-                        AudioImpactIntensity.Hard, boopComp.thisTrigger.thisMagScript.FireArm.transform.position,
-                        boopComp.thisTrigger.thisController.PoolToUse, boopComp.thisTrigger.thisController.DistLimit, 
+                if (UserConfig.UseOldSounds.Value || boopComp.thisMagTrigger.isUnSeated)
+                    SM.PlayImpactSound(boopComp.thisMagTrigger.thisController.ImpactType, MatSoundType.SoftSurface,
+                        AudioImpactIntensity.Hard, boopComp.thisMagTrigger.thisMagScript.FireArm.transform.position,
+                        boopComp.thisMagTrigger.thisController.PoolToUse, boopComp.thisMagTrigger.thisController.DistLimit, 
                         1f, 1f);
                 else
-                    boopComp.thisTrigger.PlayEndOfMagInsertionNoise(1f + 
-                                                                    Random.Range(0f, TriggerProxyScript.PitchVariance));
+                    boopComp.thisMagTrigger.PlayEndOfMagInsertionNoise(1f + 
+                                                                    Random.Range(0f, MagTriggerScript.PitchVariance));
 
                 return;
             }

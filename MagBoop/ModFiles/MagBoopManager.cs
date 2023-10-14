@@ -20,16 +20,22 @@ namespace MagBoop.ModFiles
         private void Start()
         {
             GenerateUserConfigs();
-            
+
             if (UserConfig.EnableMagTapping.Value)
             {
                 Harmony.CreateAndPatchAll(typeof(HandPatch));
                 Harmony.CreateAndPatchAll(typeof(MagazineTriggerPatches));
             }
+
             if (UserConfig.EnableMagUnSeating.Value)
             {
                 Harmony.CreateAndPatchAll(typeof(MagazineUnseatingPatches));
                 Harmony.CreateAndPatchAll(typeof(DisableChamberingPatches));
+            }
+
+            if (UserConfig.EnableSlideTapping.Value)
+            {
+                Harmony.CreateAndPatchAll(typeof(SlideTriggerPatches));
             }
         }
 
@@ -61,7 +67,9 @@ namespace MagBoop.ModFiles
                 "This enables the mag to be unseated, based on random chance as well as how fast / hard you push the magazine in.");
             UserConfig.EnableCustomSounds = Config.Bind("Activation", "Enable Custom Sounds", true,
                 "This enables the custom sounds, which should hopefully be better than the default sounds.");
-            UserConfig.EnableTriggerDebug = Config.Bind("Debug", "Enable Mag Debug Cubes", false,
+            UserConfig.EnableTriggerDebug = Config.Bind("Activation", "Enable Slide Tapping", true,
+                "This is enables the ability to tap the slide to make sure its totally forward. Useful when using Stovepipe + it's new failure to enter battery");
+            UserConfig.EnableSlideTapping = Config.Bind("Debug", "Enable Mag Debug Cubes", false,
                 "This is enables the weird white cubes where the boop trigger is located, can be used to see if the magazine you are using has it properly located.");
             
             UserConfig.MagUnseatedProbability = Config.Bind("Probabilities", "Probability of Being Unseated", 0.1f,

@@ -16,7 +16,7 @@ namespace MagBoop.ModFiles
             var magBoopComp = __instance.GetComponent<MagazineBoopComponent>();
             if (magBoopComp is null) return;
             
-            magBoopComp.thisTrigger.StartCooldownTimer();
+            magBoopComp.thisMagTrigger.StartCooldownTimer();
         }
         
         [HarmonyPatch(typeof(FVRFireArmMagazine), "Release")]
@@ -28,11 +28,11 @@ namespace MagBoop.ModFiles
             var magBoopComp = __instance.GetComponent<MagazineBoopComponent>();
             if (magBoopComp is null) return;
 
-            magBoopComp.thisTrigger.StartCooldownTimer();
+            magBoopComp.thisMagTrigger.StartCooldownTimer();
 
-            if (!magBoopComp.thisTrigger.isUnSeated) return;
+            if (!magBoopComp.thisMagTrigger.isUnSeated) return;
 
-            magBoopComp.thisTrigger.isUnSeated = false;
+            magBoopComp.thisMagTrigger.isUnSeated = false;
         }
 
         [HarmonyPatch(typeof(FVRFireArm), "Fire")]
@@ -44,7 +44,7 @@ namespace MagBoop.ModFiles
             var magBoopComp = __instance.Magazine.GetComponent<MagazineBoopComponent>();
             if (magBoopComp is null) return;
             
-            magBoopComp.thisTrigger.StartCooldownTimer();
+            magBoopComp.thisMagTrigger.StartCooldownTimer();
         }
 
         [HarmonyPatch(typeof(FVRFireArmMagazine), "Awake")]
@@ -102,7 +102,7 @@ namespace MagBoop.ModFiles
             var magBoopComp = __instance.GetComponent<MagazineBoopComponent>();
             if (magBoopComp is null) return;
             
-            if (magBoopComp.thisTrigger.insertsAboveWeapon)
+            if (magBoopComp.thisMagTrigger.insertsAboveWeapon)
                 AddOrSwapOrientationOfImpactProxy(__instance);
         }
 
@@ -126,7 +126,7 @@ namespace MagBoop.ModFiles
             else interactionObj.transform.localPosition = ColliderLocalHighestPos(topOrBottomCol) - shiftForwardFactor;
         }
 
-        private static void GenerateDebugCube(GameObject interactionObj, BoxCollider triggerCol)
+        public static void GenerateDebugCube(GameObject interactionObj, BoxCollider triggerCol)
         {
             var cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
             cube.transform.parent = interactionObj.transform;
@@ -151,11 +151,11 @@ namespace MagBoop.ModFiles
 
             triggerCol = interactionObj.AddComponent<BoxCollider>();
             magCollider = mag.GetComponent<BoxCollider>();
-            var triggerScript = interactionObj.AddComponent<TriggerProxyScript>();
-            magBoopComp = mag.gameObject.GetComponent<MagazineBoopComponent>() ??
+            var triggerScript = interactionObj.AddComponent<MagTriggerScript>();
+            magBoopComp = mag.gameObject.GetComponent<MagazineBoopComponent>() ?? 
                           mag.gameObject.AddComponent<MagazineBoopComponent>();
 
-            magBoopComp.thisTrigger = triggerScript;
+            magBoopComp.thisMagTrigger = triggerScript;
             return interactionObj;
         }
 

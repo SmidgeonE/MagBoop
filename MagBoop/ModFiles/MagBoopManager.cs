@@ -1,9 +1,12 @@
-﻿using BepInEx;
+﻿using System;
+using System.IO;
+using BepInEx;
 using BepInEx.Configuration;
 using FistVR;
 using HarmonyLib;
 using UnityEngine;
 using Valve.VR;
+using Newtonsoft.Json;
 
 namespace MagBoop.ModFiles
 {
@@ -16,10 +19,13 @@ namespace MagBoop.ModFiles
         private static float _timeLeft;
         private static float _timeUntilFadeOut;
         private static bool _hasStoppedSound = true;
+
+        public static string[] excludedWeaponNames = { "VZ-58", "AKM" };
         
         private void Start()
         {
             GenerateUserConfigs();
+            ReadOrCreateExclusionList();
 
             if (UserConfig.EnableMagTapping.Value)
             {
@@ -101,6 +107,27 @@ namespace MagBoop.ModFiles
             _hasStoppedSound = false;
             _timeUntilFadeOut = time / 2f;
             _defaultMagSoundVolume = source.Source.volume;
+        }
+
+        private static void ReadOrCreateExclusionList()
+        {
+            var userDefsRoot = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
+                               + "/StovepipeData/";
+            var exclusionsDir = userDefsRoot + "MagBoopExclusions.json/";
+
+            if (!File.Exists(userDefsRoot))
+                File.Create(userDefsRoot).Dispose();
+
+            if (!File.Exists(exclusionsDir))
+            {
+                File.Create(exclusionsDir).Dispose();
+
+                File.WriteAllText(exclusionsDir, JsonConvert.SerializeObject(excludedWeaponNames));
+            }
+            else
+            {
+                excludedWeaponNames = JsonConvert.DeserializeObject<string[]>(exclusionsDir);
+            }
         }
     }
 }

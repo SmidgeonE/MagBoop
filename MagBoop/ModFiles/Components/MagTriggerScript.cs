@@ -134,7 +134,7 @@ namespace MagBoop.ModFiles
             var movementBasedVolume = 3f + _currentInvLerpOfSpeed * VolumeVariance;
             var randomPitch = 1 + UnityEngine.Random.Range(0f, PitchVariance);
 
-            if (UserConfig.UseOldSounds.Value || isUnSeated)
+            if (UserConfig.UseOldSounds.Value)
                 SM.PlayImpactSound(thisController.ImpactType, MatSoundType.SoftSurface, impactIntensity, transform.parent.position,
                     thisController.PoolToUse, thisController.DistLimit, movementBasedVolume, randomPitch);
             else

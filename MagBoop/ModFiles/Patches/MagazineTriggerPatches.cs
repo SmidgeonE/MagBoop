@@ -112,6 +112,12 @@ namespace MagBoop.ModFiles
             triggerCol.center = Vector3.zero;
             triggerCol.size = new Vector3(magSize.x, 0.04f, magSize.z);
             triggerCol.isTrigger = true;
+
+            if (GM.CurrentPlayerBody.LeftHand != null &&
+                GM.CurrentPlayerBody.LeftHand.GetComponent<FVRViveHand>().DMode == DisplayMode.Index)
+            {
+                triggerCol.size = new Vector3(triggerCol.size.x, 0.14f, triggerCol.size.z);
+            }
             
             // Now using the lowest mesh collider, we can set the local pos + rotation of the trigger object
             // Shift forward factor accounts for the fact the bottom of the magazine will be curved, so a simple 

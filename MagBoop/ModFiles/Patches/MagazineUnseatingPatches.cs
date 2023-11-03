@@ -24,6 +24,7 @@ namespace MagBoop.ModFiles
             // For now we remove ak-pattern weapons from the pool...
             
             if (fireArm is ClosedBoltWeapon cb && cb.Bolt.UsesAKSafetyLock) return;
+            if (MagBoopManager.excludedWeaponNames.Contains(fireArm.name.Remove(fireArm.name.Length - 7))) return;
             
             var magBoopComp = __instance.GetComponent<MagazineBoopComponent>();
             if (magBoopComp is null) return;

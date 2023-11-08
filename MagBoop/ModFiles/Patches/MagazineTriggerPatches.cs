@@ -110,13 +110,13 @@ namespace MagBoop.ModFiles
             GameObject interactionObj, MagazineBoopComponent magBoopComp, BoxCollider topOrBottomCol)
         {
             triggerCol.center = Vector3.zero;
-            triggerCol.size = new Vector3(magSize.x, 0.04f, magSize.z);
+            triggerCol.size = new Vector3(magSize.x, 0.045f, magSize.z);
             triggerCol.isTrigger = true;
 
             if (GM.CurrentPlayerBody.LeftHand != null &&
                 GM.CurrentPlayerBody.LeftHand.GetComponent<FVRViveHand>().DMode == DisplayMode.Index)
             {
-                triggerCol.size = new Vector3(triggerCol.size.x, 0.14f, triggerCol.size.z);
+                triggerCol.size = new Vector3(triggerCol.size.x, 0.17f, triggerCol.size.z);
             }
             
             // Now using the lowest mesh collider, we can set the local pos + rotation of the trigger object
@@ -171,12 +171,15 @@ namespace MagBoop.ModFiles
             var capsuleCollider = mag.GetComponent<CapsuleCollider>();
 
             triggerCol.center = Vector3.zero;
-            triggerCol.size = new Vector3(capsuleCollider.radius, 0.02f, capsuleCollider.height);
+            triggerCol.size = new Vector3(capsuleCollider.radius, 0.02f, capsuleCollider.height / 2f);
             triggerCol.isTrigger = true;
 
             interactionObj.transform.localPosition = Vector3.zero -
                                                      Vector3.up * capsuleCollider.radius *
-                                                     interactionObj.transform.localScale.y;
+                                                     interactionObj.transform.localScale.y -
+                                                     Vector3.forward * capsuleCollider.height *
+                                                     interactionObj.transform.localScale.y / 2f;
+                                                     ;
         }
         
         private static void GenerateSphereMagazineTrigger(FVRFireArmMagazine mag, BoxCollider triggerCol,

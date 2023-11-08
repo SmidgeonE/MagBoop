@@ -80,7 +80,7 @@ namespace MagBoop.ModFiles
             
             UserConfig.MagUnseatedProbability = Config.Bind("Probabilities", "Probability of Being Unseated", 0.1f,
                 "This is the base probability that the magazine will be seated incorrectly even if you push it in with decent force.");
-            UserConfig.SlowSpeedUnseatingProbability = Config.Bind("Probabilities", "Probability of mag being unseated when inserted SLOWLY", 0.9f,
+            UserConfig.SlowSpeedUnseatingProbability = Config.Bind("Probabilities", "Probability of mag being unseated when inserted SLOWLY", 0.5f,
                 "This is the base probability that the magazine will be seated incorrectly if you insert it really slowly.");
             UserConfig.DoubleFeedMultiplier = Config.Bind("Probabilities", "Double Feed Probability Multiplier", 5f,
                 "This is the multiplier applied to the double feeding chance of a weapon that has a magazine which isn't seated properly.");
@@ -101,6 +101,15 @@ namespace MagBoop.ModFiles
             
             UserConfig.DisableForBeltFeds = Config.Bind("Disabling", "Disable for all belt-fed weapons.", true,
                 "This allows you to stop the mag unseating for belt-fed weapons.");
+
+            UserConfig.HKProbBoltClosed = Config.Bind("Probabilities",
+                "Probability for unseating when BOLT CLOSED (HK)", 0.75f,
+                "Probability that the magazine won't enter correctly for HK-style weapons when the bolt" +
+                " is CLOSED (makes it harder for magazine to enter).");
+            UserConfig.HKProbBoltOpen = Config.Bind("Probabilities",
+                "Probability for unseating when BOLT OPEN (HK)", 0.1f,
+                "Probability that the magazine won't enter correctly for HK-style weapons when the bolt" +
+                " is OPEN (makes it easier for magazine to enter).");
         }
         
         public static void StartMagNoiseTimer(FVRPooledAudioSource source, float time)

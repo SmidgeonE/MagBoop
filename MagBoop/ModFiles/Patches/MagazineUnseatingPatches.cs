@@ -18,18 +18,19 @@ namespace MagBoop.ModFiles
         [HarmonyPrefix]
         private static void UnSeatMagDiceRoll(FVRFireArmMagazine __instance, FVRFireArm fireArm)
         {
+            // List of various exclusions for mag unseating...
+            
             if (!__instance.IsExtractable) return;
             if (__instance.IsEnBloc) return;
             if (UserConfig.DisableForBeltFeds.Value && fireArm.UsesBeltBoxes) return;
-            
-            // For now we remove ak-pattern weapons from the pool...
-            
             if (fireArm is ClosedBoltWeapon cb && cb.Bolt.UsesAKSafetyLock) return;
             if (MagBoopManager.ExcludedWeaponNames.Contains(fireArm.name.Remove(fireArm.name.Length - 7))) return;
             
             var magBoopComp = __instance.GetComponent<MagazineBoopComponent>();
             if (magBoopComp is null) return;
             if (magBoopComp.thisMagTrigger.isUnSeated) return;
+
+            var ignoreHandVelocityEffect = false;
 
             // Grabbing user defined probability modifiers...
             var weaponTypeProbabilityModifier = 1f;
@@ -39,12 +40,27 @@ namespace MagBoop.ModFiles
                 case Handgun _:
                     weaponTypeProbabilityModifier = UserConfig.HandgunProbability.Value;
                     break;
+                
                 case OpenBoltReceiver _:
                     weaponTypeProbabilityModifier = UserConfig.OpenBoltProbability.Value;
                     break;
-                case ClosedBoltWeapon _:
-                    weaponTypeProbabilityModifier = UserConfig.ClosedBoltProbability.Value;
+                
+                case ClosedBoltWeapon cbw:
+                    if (!cbw.Handle.IsSlappable)
+                    {
+                        weaponTypeProbabilityModifier = UserConfig.ClosedBoltProbability.Value;
+                        break;
+                    }
+
+                    if (cbw.Bolt.CurPos == ClosedBolt.BoltPos.Forward)
+                        weaponTypeProbabilityModifier = UserConfig.HKProbBoltClosed.Value;
+                    else
+                        weaponTypeProbabilityModifier = UserConfig.HKProbBoltOpen.Value;
+
+                    ignoreHandVelocityEffect = true;
+
                     break;
+                
                 case TubeFedShotgun _:
                     weaponTypeProbabilityModifier = UserConfig.TubeFedShotgunProbability.Value;
                     break;
@@ -65,6 +81,8 @@ namespace MagBoop.ModFiles
             var speedLerp = Mathf.InverseLerp(slowSpeed, quickSpeed, Mathf.Abs(magSpeedRelativeToWeapon));
             var lerpedProbability = Mathf.Lerp(UserConfig.SlowSpeedUnseatingProbability.Value,
                 UserConfig.MagUnseatedProbability.Value, speedLerp);
+
+            if (ignoreHandVelocityEffect) lerpedProbability = 1f;
             
             if (Random.Range(0f, 1f) < lerpedProbability * weaponTypeProbabilityModifier)
             {

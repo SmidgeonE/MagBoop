@@ -28,5 +28,8 @@ namespace MagBoop.ModFiles
         public static ConfigEntry<float> TubeFedShotgunProbability;
 
         public static ConfigEntry<bool> DisableForBeltFeds;
+
+        public static ConfigEntry<float> HKProbBoltClosed;
+        public static ConfigEntry<float> HKProbBoltOpen;
     }
 }

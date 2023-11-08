@@ -20,11 +20,12 @@ namespace MagBoop.ModFiles
         {
             if (!__instance.IsExtractable) return;
             if (__instance.IsEnBloc) return;
+            if (UserConfig.DisableForBeltFeds.Value && fireArm.UsesBeltBoxes) return;
             
             // For now we remove ak-pattern weapons from the pool...
             
             if (fireArm is ClosedBoltWeapon cb && cb.Bolt.UsesAKSafetyLock) return;
-            if (MagBoopManager.excludedWeaponNames.Contains(fireArm.name.Remove(fireArm.name.Length - 7))) return;
+            if (MagBoopManager.ExcludedWeaponNames.Contains(fireArm.name.Remove(fireArm.name.Length - 7))) return;
             
             var magBoopComp = __instance.GetComponent<MagazineBoopComponent>();
             if (magBoopComp is null) return;

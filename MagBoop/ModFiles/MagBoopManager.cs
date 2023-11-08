@@ -20,7 +20,7 @@ namespace MagBoop.ModFiles
         private static float _timeUntilFadeOut;
         private static bool _hasStoppedSound = true;
 
-        public static string[] excludedWeaponNames = { "VZ-58", "AKM" };
+        public static string[] ExcludedWeaponNames = { "VZ58_P", "VZ58_V", "AKM" };
         
         private void Start()
         {
@@ -98,6 +98,9 @@ namespace MagBoop.ModFiles
                 "This is a modifier for how often the mag should be unseated for each type of weapon.");
             UserConfig.TubeFedShotgunProbability = Config.Bind("Specific Weapon Type Probabilities", "Tube Fed Shotguns", 1f,
                 "This is a modifier for how often the mag should be unseated for each type of weapon.");
+            
+            UserConfig.DisableForBeltFeds = Config.Bind("Disabling", "Disable for all belt-fed weapons.", true,
+                "This allows you to stop the mag unseating for belt-fed weapons.");
         }
         
         public static void StartMagNoiseTimer(FVRPooledAudioSource source, float time)
@@ -113,20 +116,20 @@ namespace MagBoop.ModFiles
         {
             var userDefsRoot = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
                                + "/StovepipeData/";
-            var exclusionsDir = userDefsRoot + "MagBoopExclusions.json/";
+            var exclusionsDir = userDefsRoot + "MagBoopExclusions.json";
 
             if (!File.Exists(userDefsRoot))
-                File.Create(userDefsRoot).Dispose();
+                Directory.CreateDirectory(userDefsRoot);
 
             if (!File.Exists(exclusionsDir))
             {
                 File.Create(exclusionsDir).Dispose();
 
-                File.WriteAllText(exclusionsDir, JsonConvert.SerializeObject(excludedWeaponNames));
+                File.WriteAllText(exclusionsDir, JsonConvert.SerializeObject(ExcludedWeaponNames));
             }
             else
             {
-                excludedWeaponNames = JsonConvert.DeserializeObject<string[]>(exclusionsDir);
+                ExcludedWeaponNames = JsonConvert.DeserializeObject<string[]>(File.ReadAllText(exclusionsDir));
             }
         }
     }

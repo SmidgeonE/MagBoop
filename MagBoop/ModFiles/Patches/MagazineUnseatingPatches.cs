@@ -29,9 +29,7 @@ namespace MagBoop.ModFiles
             var magBoopComp = __instance.GetComponent<MagazineBoopComponent>();
             if (magBoopComp is null) return;
             if (magBoopComp.thisMagTrigger.isUnSeated) return;
-
-            var ignoreHandVelocityEffect = false;
-
+            
             // Grabbing user defined probability modifiers...
             var weaponTypeProbabilityModifier = 1f;
 
@@ -46,19 +44,18 @@ namespace MagBoop.ModFiles
                     break;
                 
                 case ClosedBoltWeapon cbw:
-                    if (!cbw.Handle.IsSlappable)
-                    {
+                    // Handling whether the probability should be increased based on if the bolt is closed / open
+                    // Maths could do with a little work ngl
+                    
+                    if (cbw.Handle == null)
                         weaponTypeProbabilityModifier = UserConfig.ClosedBoltProbability.Value;
-                        break;
-                    }
-
-                    if (cbw.Bolt.CurPos == ClosedBolt.BoltPos.Forward)
+                    else if (cbw.Handle.IsSlappable && cbw.Bolt.CurPos == ClosedBolt.BoltPos.Forward)
                         weaponTypeProbabilityModifier = UserConfig.HKProbBoltClosed.Value;
+                    else if (cbw.Bolt.CurPos == ClosedBolt.BoltPos.Forward)
+                        weaponTypeProbabilityModifier = UserConfig.GenericProbBoltClosed.Value;
                     else
-                        weaponTypeProbabilityModifier = UserConfig.HKProbBoltOpen.Value;
-
-                    ignoreHandVelocityEffect = true;
-
+                        weaponTypeProbabilityModifier = UserConfig.ClosedBoltProbability.Value;
+                    
                     break;
                 
                 case TubeFedShotgun _:
@@ -81,8 +78,6 @@ namespace MagBoop.ModFiles
             var speedLerp = Mathf.InverseLerp(slowSpeed, quickSpeed, Mathf.Abs(magSpeedRelativeToWeapon));
             var lerpedProbability = Mathf.Lerp(UserConfig.SlowSpeedUnseatingProbability.Value,
                 UserConfig.MagUnseatedProbability.Value, speedLerp);
-
-            if (ignoreHandVelocityEffect) lerpedProbability = 1f;
             
             if (Random.Range(0f, 1f) < lerpedProbability * weaponTypeProbabilityModifier)
             {
@@ -126,9 +121,6 @@ namespace MagBoop.ModFiles
             var doubleFeedData = __instance.FireArm.GetComponent<DoubleFeedData>();
             if (doubleFeedData != null)
             {
-                /*Debug.Log("increaseing double feed mutli;liers");
-                    Debug.Log("from " + doubleFeedData.doubleFeedChance);
-                    Debug.Log("to " + doubleFeedData.doubleFeedChance * UserConfig.DoubleFeedMultiplier.Value);*/
                 doubleFeedData.doubleFeedChance *= UserConfig.DoubleFeedMultiplier.Value;
                 doubleFeedData.doubleFeedMaxChance *= UserConfig.DoubleFeedMultiplier.Value;
             }

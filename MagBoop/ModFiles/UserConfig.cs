@@ -30,6 +30,6 @@ namespace MagBoop.ModFiles
         public static ConfigEntry<bool> DisableForBeltFeds;
 
         public static ConfigEntry<float> HKProbBoltClosed;
-        public static ConfigEntry<float> HKProbBoltOpen;
+        public static ConfigEntry<float> GenericProbBoltClosed;
     }
 }

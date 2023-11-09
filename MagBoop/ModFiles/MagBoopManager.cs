@@ -102,14 +102,14 @@ namespace MagBoop.ModFiles
             UserConfig.DisableForBeltFeds = Config.Bind("Disabling", "Disable for all belt-fed weapons.", true,
                 "This allows you to stop the mag unseating for belt-fed weapons.");
 
-            UserConfig.HKProbBoltClosed = Config.Bind("Probabilities",
-                "Probability for unseating when BOLT CLOSED (HK)", 0.75f,
-                "Probability that the magazine won't enter correctly for HK-style weapons when the bolt" +
+            UserConfig.HKProbBoltClosed = Config.Bind("Probabilities Modifiers",
+                "Probability modifier for unseating when BOLT CLOSED (HK)", 1.75f,
+                "Probability modifier that the magazine won't enter correctly for HK-style weapons when the bolt" +
                 " is CLOSED (makes it harder for magazine to enter).");
-            UserConfig.HKProbBoltOpen = Config.Bind("Probabilities",
-                "Probability for unseating when BOLT OPEN (HK)", 0.1f,
-                "Probability that the magazine won't enter correctly for HK-style weapons when the bolt" +
-                " is OPEN (makes it easier for magazine to enter).");
+            UserConfig.GenericProbBoltClosed = Config.Bind("Probabilities Modifiers",
+                "Probability modifier for unseating when BOLT CLOSED (Generic Closed Bolt Weapons)", 1.2f,
+                "Probability modifier that the magazine won't enter correctly for normal closed bolt weapons when the bolt" +
+                " is CLOSED (makes it harder for magazine to enter).");
         }
         
         public static void StartMagNoiseTimer(FVRPooledAudioSource source, float time)

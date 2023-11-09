@@ -124,7 +124,7 @@ namespace MagBoop.ModFiles
             // translation downwards causes the trigger to be quite far back.
 
             var shiftForwardFactor = -Vector3.forward * (float)Math.Tan(interactionObj.transform.localRotation.x) *
-                                     ((magSize.y / 2) + 0.02f);
+                                     ((magSize.y / 2) + 0.04f);
             
             interactionObj.transform.localRotation = topOrBottomCol.transform.localRotation;
             
@@ -178,8 +178,7 @@ namespace MagBoop.ModFiles
                                                      Vector3.up * capsuleCollider.radius *
                                                      interactionObj.transform.localScale.y -
                                                      Vector3.forward * capsuleCollider.height *
-                                                     interactionObj.transform.localScale.y / 2f;
-                                                     ;
+                                                     interactionObj.transform.localScale.y / 4f;
         }
         
         private static void GenerateSphereMagazineTrigger(FVRFireArmMagazine mag, BoxCollider triggerCol,

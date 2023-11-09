@@ -119,11 +119,9 @@ namespace MagBoop.ModFiles
                 magTransform.position -= magTransform.up * 0.015f;
 
             var doubleFeedData = __instance.FireArm.GetComponent<DoubleFeedData>();
+            
             if (doubleFeedData != null)
-            {
                 doubleFeedData.doubleFeedChance *= UserConfig.DoubleFeedMultiplier.Value;
-                doubleFeedData.doubleFeedMaxChance *= UserConfig.DoubleFeedMultiplier.Value;
-            }
         }
 
         [HarmonyPatch(typeof(FVRFireArmMagazine), "Release")]
@@ -138,8 +136,8 @@ namespace MagBoop.ModFiles
             var doubleFeedData = __instance.FireArm.GetComponent<DoubleFeedData>();
             if (doubleFeedData is null) return;
 
-            doubleFeedData.doubleFeedChance /= UserConfig.DoubleFeedMultiplier.Value;
-            doubleFeedData.doubleFeedMaxChance /= UserConfig.DoubleFeedMultiplier.Value;
+            if (doubleFeedData.doubleFeedChance > doubleFeedData.doubleFeedMaxChance)
+                doubleFeedData.doubleFeedChance /= UserConfig.DoubleFeedMultiplier.Value;
         }
 
         [HarmonyPatch(typeof(FVRPooledAudioSource), "Play")]

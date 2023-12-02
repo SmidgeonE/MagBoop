@@ -27,6 +27,8 @@ If you have any issues / ideas / need help with modding, I am always available o
 
 # Changelog
 
+1.3.1 - New icon thanks to Østrem!
+
 1.3.0 - Improved Valve Index mag triggers. Added better mag-boop sound for half-way boop. Added exclusion list system, simply find the name of the weapon you want to no longer have mag unseating, and you can remove it. More in the upper description. Added option to exclude all belt feds (on by default). Adjusted some magazines triggers to be better. Added multipliers so that Closed Bolt Weapons are more likely to not be seated when the bolt is closed (adjustable in config), with a specific config option for HK-style weapons (typically have this issue a lot more). Thank you to HylianWolf on discord for the info. Fixed bug with Stovepipe's bullet creep not working correctly with MagBoop. 
 
 1.2.1 - Improved slide boop trigger positions.

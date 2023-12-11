@@ -90,12 +90,7 @@ namespace MagBoop.ModFiles
             isUnSeated = false;
             
             // If double feed data can be found, we reduce the double feed chance again
-            
-            var doubleFeedData = thisMagScript.FireArm.GetComponent<DoubleFeedData>();
-            if (doubleFeedData == null) return;
-            
-            doubleFeedData.doubleFeedChance /= UserConfig.DoubleFeedMultiplier.Value;
-            doubleFeedData.doubleFeedMaxChance /= UserConfig.DoubleFeedMultiplier.Value;
+
         }
         
         public void CheckAndPlayBoopSound(FVRViveHand hand)

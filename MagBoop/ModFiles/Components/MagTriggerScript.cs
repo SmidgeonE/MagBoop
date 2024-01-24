@@ -150,6 +150,8 @@ namespace MagBoop.ModFiles
 
         public void PlayEndOfMagInsertionNoise(float randomPitch)
         {
+            Debug.Log("playing sound");
+            
             if (thisMagScript.ProfileOverride == null)
                 _pooledAudioSource = thisMagScript.FireArm.PlayAudioAsHandling(thisMagScript.Profile.MagazineIn,
                     thisMagScript.FireArm.transform.position);
@@ -161,12 +163,13 @@ namespace MagBoop.ModFiles
 
             _hasFoundPooledAudioSource = true;
             _pooledAudioSource.Source.Stop();
-            _pooledAudioSource.Source.volume = 1f;
+            _pooledAudioSource.Source.volume = _pooledAudioSource.Source.clip.length / 2f;
             _pooledAudioSource.Source.time = 0.09f;
             _pooledAudioSource.Source.pitch = randomPitch;
             _pooledAudioSource.Source.Play();
 
-            _timeTillResetAudioTimer = _pooledAudioSource.Source.clip.length - 0.09f;
+            _timeTillResetAudioTimer = _pooledAudioSource.Source.clip.length / 2f;
+            
             _hasResetAudioTimer = false;
         }
     }

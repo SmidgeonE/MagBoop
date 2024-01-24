@@ -138,6 +138,12 @@ namespace MagBoop.ModFiles
             _currentInvLerpOfSpeed = Mathf.InverseLerp(MinSpeed, MaxSpeed, upwardsSpeed);
             var movementBasedVolume = 3f + _currentInvLerpOfSpeed * VolumeVariance;
             var randomPitch = 1 + UnityEngine.Random.Range(0f, PitchVariance);
+            
+            // Do the third law physics thing
+            if (insertsAboveWeapon && UserConfig.UseThirdLaw.Value)
+                ImpartTorqueOnWeapon(handRb, totalVelocityMagnitude, -thisMagScript.FireArm.transform.up);
+            else if (UserConfig.UseThirdLaw.Value)
+                ImpartTorqueOnWeapon(handRb, totalVelocityMagnitude, thisMagScript.FireArm.transform.up);
 
             if (UserConfig.UseOldSounds.Value)
                 SM.PlayImpactSound(thisController.ImpactType, MatSoundType.SoftSurface, impactIntensity, transform.parent.position,
@@ -146,6 +152,23 @@ namespace MagBoop.ModFiles
                 PlayEndOfMagInsertionNoise(randomPitch);
 
             StartCooldownTimer();
+        }
+
+        private void ImpartTorqueOnWeapon(Rigidbody handRb, float handVelocityMag, Vector3 boopDir)
+        {
+            var weaponRb = thisMagScript.FireArm.RootRigidbody;
+            
+            // torque = distance x force
+            var force = 10f * UserConfig.ThirdLawPower.Value * handVelocityMag * boopDir;
+            var torque = Vector3.Cross(weaponRb.transform.position - handRb.transform.position, force);
+
+            if (!weaponRb)
+            {
+                Debug.Log("no weapon rb");
+                return;
+            }
+            
+            weaponRb.AddTorque(torque, ForceMode.Force);
         }
 
         public void PlayEndOfMagInsertionNoise(float randomPitch)

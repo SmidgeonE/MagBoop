@@ -31,5 +31,8 @@ namespace MagBoop.ModFiles
 
         public static ConfigEntry<float> HKProbBoltClosed;
         public static ConfigEntry<float> GenericProbBoltClosed;
+
+        public static ConfigEntry<bool> UseThirdLaw;
+        public static ConfigEntry<float> ThirdLawPower;
     }
 }

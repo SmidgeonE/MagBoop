@@ -110,6 +110,13 @@ namespace MagBoop.ModFiles
                 "Probability modifier for unseating when BOLT CLOSED (Generic Closed Bolt Weapons)", 1.2f,
                 "Probability modifier that the magazine won't enter correctly for normal closed bolt weapons when the bolt" +
                 " is CLOSED (makes it harder for magazine to enter).");
+            
+            UserConfig.UseThirdLaw = Config.Bind("Third Law Implementation",
+                "Enable Third Law Jiggle", true,
+                "This is the thing that causes the weapon to shake when you boop.");
+            UserConfig.ThirdLawPower = Config.Bind("Third Law Implementation",
+                "The size of the jiggle, default 30f", 30f,
+                "This is the thing that causes the weapon to shake when you boop.");
         }
         
         public static void StartMagNoiseTimer(FVRPooledAudioSource source, float time)

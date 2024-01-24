@@ -163,12 +163,12 @@ namespace MagBoop.ModFiles
 
             _hasFoundPooledAudioSource = true;
             _pooledAudioSource.Source.Stop();
-            _pooledAudioSource.Source.volume = _pooledAudioSource.Source.clip.length / 2f;
-            _pooledAudioSource.Source.time = 0.09f;
+            _pooledAudioSource.Source.volume = 1f;
+            _pooledAudioSource.Source.time = 0.15f * _pooledAudioSource.Source.clip.length;
             _pooledAudioSource.Source.pitch = randomPitch;
             _pooledAudioSource.Source.Play();
 
-            _timeTillResetAudioTimer = _pooledAudioSource.Source.clip.length / 2f;
+            _timeTillResetAudioTimer = _pooledAudioSource.Source.clip.length * 0.85f;
             
             _hasResetAudioTimer = false;
         }

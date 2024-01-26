@@ -129,6 +129,8 @@ namespace MagBoop.ModFiles
             var magBoopComp = __instance.GetComponent<MagazineBoopComponent>();
             if (magBoopComp is null) return;
 
+            if (__instance.FireArm is null) return;
+
             var doubleFeedData = __instance.FireArm.GetComponent<DoubleFeedData>();
             if (doubleFeedData is null) return;
             

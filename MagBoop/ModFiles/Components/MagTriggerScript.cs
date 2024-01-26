@@ -163,18 +163,13 @@ namespace MagBoop.ModFiles
             var torque = Vector3.Cross(weaponRb.transform.position - handRb.transform.position, force);
 
             if (!weaponRb)
-            {
-                Debug.Log("no weapon rb");
                 return;
-            }
-            
+
             weaponRb.AddTorque(torque, ForceMode.Force);
         }
 
         public void PlayEndOfMagInsertionNoise(float randomPitch)
         {
-            Debug.Log("playing sound");
-            
             if (thisMagScript.ProfileOverride == null)
                 _pooledAudioSource = thisMagScript.FireArm.PlayAudioAsHandling(thisMagScript.Profile.MagazineIn,
                     thisMagScript.FireArm.transform.position);
@@ -187,11 +182,11 @@ namespace MagBoop.ModFiles
             _hasFoundPooledAudioSource = true;
             _pooledAudioSource.Source.Stop();
             _pooledAudioSource.Source.volume = 1f;
-            _pooledAudioSource.Source.time = 0.15f * _pooledAudioSource.Source.clip.length;
+            _pooledAudioSource.Source.time = 0.1f * _pooledAudioSource.Source.clip.length;
             _pooledAudioSource.Source.pitch = randomPitch;
             _pooledAudioSource.Source.Play();
 
-            _timeTillResetAudioTimer = _pooledAudioSource.Source.clip.length * 0.85f;
+            _timeTillResetAudioTimer = _pooledAudioSource.Source.clip.length * 0.9f;
             
             _hasResetAudioTimer = false;
         }

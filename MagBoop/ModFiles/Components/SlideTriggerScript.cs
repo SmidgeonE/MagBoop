@@ -21,14 +21,21 @@ namespace MagBoop.ModFiles
                 && GM.Options.MovementOptions.CurrentMovementMode == FVRMovementManager.MovementMode.Armswinger) return;
             if (hand.CurrentInteractable != null) return;
             if (hand.Input.GripPressed) return;
+
+            var handRb = hand.GetComponent<Rigidbody>();
+            var relativeVelocity = handRb.velocity - slideScript.Handgun.RootRigidbody.velocity;
             
-            if (!(Vector3.Dot(
-                    hand.GetComponent<Rigidbody>().velocity - slideScript.Handgun.RootRigidbody.velocity,
-                    transform.forward) > 0.003f)) return;
+            if (!(Vector3.Dot(relativeVelocity, transform.forward) > 0.003f)) return;
+            if (Vector3.Dot(relativeVelocity, transform.forward) < 0.5f * relativeVelocity.magnitude) return;
 
             hand.Buzz(hand.Buzzer.Buzz_BeginInteraction);
             var stoveData = transform.parent.GetComponent<StovepipeData>();
             var pitchShift = 1 + UnityEngine.Random.Range(0f, 0.4f);
+            
+            // If we have the 3rd law thing enabled, we boop
+            if (UserConfig.UseThirdLaw.Value)
+                ImpartTorqueOnWeapon(handRb, relativeVelocity.magnitude, transform.forward);
+
 
             if (stoveData != null)
             {
@@ -41,6 +48,19 @@ namespace MagBoop.ModFiles
             }
             else
                 slideScript.Handgun.PlayAudioEvent(FirearmAudioEventType.BoltSlideForwardHeld, pitchShift);
+        }
+        
+        private void ImpartTorqueOnWeapon(Rigidbody handRb, float handVelocityMag, Vector3 boopDir)
+        {
+            var weaponRb = slideScript.Handgun.RootRigidbody;
+            
+            if (!weaponRb) return;
+
+            // torque = distance x force
+            var force = UserConfig.ThirdLawPower.Value * 30f * handVelocityMag * boopDir;
+            var torque = Vector3.Cross(weaponRb.transform.position - handRb.transform.position, force);
+            
+            weaponRb.AddTorque(torque, ForceMode.Force);
         }
     }
 }

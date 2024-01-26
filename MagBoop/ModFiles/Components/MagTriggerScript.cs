@@ -126,11 +126,7 @@ namespace MagBoop.ModFiles
 
             var totalVelocityMagnitude = (handRb.velocity - weaponRb.velocity).magnitude;
 
-            if (upwardsSpeed < 0.5 * totalVelocityMagnitude)
-            {
-                Debug.Log("Total movement of hand is not enough in the right direction");
-                return;
-            }
+            if (upwardsSpeed < 0.5 * totalVelocityMagnitude) return;
 
             // Gather how loud the sound should be based on the movement of the hand.
             // If this boop is the one to make the mag fully seated, it will be lower pitch so the user knows

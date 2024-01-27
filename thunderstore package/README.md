@@ -27,6 +27,8 @@ If you have any issues / ideas / need help with modding, I am always available o
 
 # Changelog
 
+1.4.1 - Added new Third law thing to the handgun slide hitting feature.
+
 1.4.0 - Added new Third Law thing, where the weapon moves when you boop it. Of course it can be disabled in the config, at the bottom under "Third Law"
 
 1.3.2 - Removed double feed probability modifiers when the mag is half in. The code I wrote for it was awful and no one will notice that it's gone anyway :)

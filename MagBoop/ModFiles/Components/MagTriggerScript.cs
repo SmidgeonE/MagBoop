@@ -1,6 +1,7 @@
 ﻿using System;
 using FistVR;
 using HarmonyLib;
+using HarmonyLib.Tools;
 using Stovepipe;
 using UnityEngine;
 using Random = System.Random;
@@ -166,13 +167,30 @@ namespace MagBoop.ModFiles
 
         public void PlayEndOfMagInsertionNoise(float randomPitch)
         {
-            if (thisMagScript.ProfileOverride == null)
+            if (!thisMagScript.UsesOverrideInOut)
+            {
                 _pooledAudioSource = thisMagScript.FireArm.PlayAudioAsHandling(thisMagScript.Profile.MagazineIn,
                     thisMagScript.FireArm.transform.position);
+
+                if (_pooledAudioSource is null)
+                { 
+                    // If there is no profile, we play the default sound
+                    thisMagScript.FireArm.PlayAudioEvent(FirearmAudioEventType.MagazineIn);
+                    return;
+                }
+            }
             else
+            {
                 _pooledAudioSource = thisMagScript.FireArm.PlayAudioAsHandling(thisMagScript.ProfileOverride.MagazineIn,
                     thisMagScript.FireArm.transform.position);
-
+                
+                if (_pooledAudioSource is null)
+                {
+                    _pooledAudioSource = thisMagScript.FireArm.PlayAudioAsHandling(thisMagScript.Profile.MagazineIn,
+                        thisMagScript.FireArm.transform.position);
+                }
+            }
+            
             if (_pooledAudioSource is null) return;
 
             _hasFoundPooledAudioSource = true;

@@ -171,27 +171,30 @@ namespace MagBoop.ModFiles
             {
                 _pooledAudioSource = thisMagScript.FireArm.PlayAudioAsHandling(thisMagScript.Profile.MagazineIn,
                     thisMagScript.FireArm.transform.position);
-
-                if (_pooledAudioSource is null)
-                { 
-                    // If there is no profile, we play the default sound
-                    thisMagScript.FireArm.PlayAudioEvent(FirearmAudioEventType.MagazineIn);
-                    return;
-                }
+                
+                Debug.Log("no override used");
             }
             else
             {
                 _pooledAudioSource = thisMagScript.FireArm.PlayAudioAsHandling(thisMagScript.ProfileOverride.MagazineIn,
                     thisMagScript.FireArm.transform.position);
+                Debug.Log("override used");
                 
                 if (_pooledAudioSource is null)
                 {
+                    Debug.Log("playing default profile sound");
                     _pooledAudioSource = thisMagScript.FireArm.PlayAudioAsHandling(thisMagScript.Profile.MagazineIn,
                         thisMagScript.FireArm.transform.position);
                 }
             }
             
-            if (_pooledAudioSource is null) return;
+            if (_pooledAudioSource is null)
+            { 
+                // If there is no profile, we play the default sound
+                Debug.Log("playing default sound");
+                thisMagScript.FireArm.PlayAudioEvent(FirearmAudioEventType.MagazineIn);
+                return;
+            }
 
             _hasFoundPooledAudioSource = true;
             _pooledAudioSource.Source.Stop();

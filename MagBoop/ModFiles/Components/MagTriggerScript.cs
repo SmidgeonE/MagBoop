@@ -33,6 +33,10 @@ namespace MagBoop.ModFiles
         
         public bool hasAlreadyTappedOnce;
 
+        private float rotationSpeedTimer = 0f;
+        private const float RotationSpeedCooldown = 0.2f;
+        private bool hasResetRotation = true;
+
         protected override void Start()
         {
             var magTransform = transform.parent;
@@ -48,6 +52,12 @@ namespace MagBoop.ModFiles
             soundCooldownTimer = SoundCooldown;
         }
 
+        private void StartRotationSpeedTimer()
+        {
+            hasResetRotation = false;
+            rotationSpeedTimer = RotationSpeedCooldown;
+        }
+
         public override bool IsInteractable()
         {
             return false;
@@ -59,6 +69,21 @@ namespace MagBoop.ModFiles
             
             if (_timeTillResetAudioTimer > 0f) _timeTillResetAudioTimer -= Time.fixedDeltaTime;
             else if (!_hasResetAudioTimer && _hasFoundPooledAudioSource) ResetAudioAndAudioTimer();
+            
+            if (rotationSpeedTimer > 0) rotationSpeedTimer -= Time.fixedDeltaTime;
+            else
+            {
+                rotationSpeedTimer = 0f;
+                if (!hasResetRotation) ResetRotationSpeed();
+            }
+        }
+
+        private void ResetRotationSpeed()
+        {
+            Debug.Log("Resetting rotation speed");
+            if (thisMagScript.FireArm == null) return;
+            thisMagScript.FireArm.RotIntensity = MagBoopManager.DefaultRotationIntensities[thisMagScript.FireArm];
+            hasResetRotation = true;
         }
 
         private void ResetAudioAndAudioTimer()
@@ -163,6 +188,10 @@ namespace MagBoop.ModFiles
                 return;
 
             weaponRb.AddTorque(torque, ForceMode.Force);
+            Debug.Log("Applying rotation speed decrease");
+            Debug.Log(thisMagScript.FireArm.RotIntensity);
+            thisMagScript.FireArm.RotIntensity *= UserConfig.ThirdLawRotationSpeedMultiplier.Value;
+            StartRotationSpeedTimer();
         }
 
         public void PlayEndOfMagInsertionNoise(float randomPitch)

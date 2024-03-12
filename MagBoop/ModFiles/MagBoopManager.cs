@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using BepInEx;
 using BepInEx.Configuration;
@@ -19,7 +20,7 @@ namespace MagBoop.ModFiles
         private static float _timeLeft;
         private static float _timeUntilFadeOut;
         private static bool _hasStoppedSound = true;
-
+        public static Dictionary<FVRFireArm, float> DefaultRotationIntensities = new Dictionary<FVRFireArm, float>();
         public static string[] ExcludedWeaponNames = { "VZ58_P", "VZ58_V", "AKM" };
         
         private void Start()
@@ -43,6 +44,9 @@ namespace MagBoop.ModFiles
             {
                 Harmony.CreateAndPatchAll(typeof(SlideTriggerPatches));
             }
+
+            if (UserConfig.UseThirdLaw.Value)
+                Harmony.CreateAndPatchAll(typeof(FireArmRotationSpeedPatches));
         }
 
         private void Update()
@@ -117,6 +121,12 @@ namespace MagBoop.ModFiles
             UserConfig.ThirdLawPower = Config.Bind("Third Law Implementation",
                 "The size of the jiggle, default 30f", 30f,
                 "This is the thing that causes the weapon to shake when you boop.");
+
+            UserConfig.ThirdLawRotationSpeedMultiplier = Config.Bind("Third Law Implementation",
+                "Rotation Speed Multiplier",
+                0.2f,
+                "This reduces the speed of the weapon's rotation after you have booped it." +
+                " Default set to 20% of the original value.");
         }
         
         public static void StartMagNoiseTimer(FVRPooledAudioSource source, float time)

@@ -61,6 +61,8 @@ namespace MagBoop.ModFiles
             var torque = Vector3.Cross(weaponRb.transform.position - handRb.transform.position, force);
             
             weaponRb.AddTorque(torque, ForceMode.Force);
+            slideScript.Handgun.RotIntensity *= UserConfig.ThirdLawRotationSpeedMultiplier.Value;
+            
         }
     }
 }

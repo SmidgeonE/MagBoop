@@ -34,5 +34,6 @@ namespace MagBoop.ModFiles
 
         public static ConfigEntry<bool> UseThirdLaw;
         public static ConfigEntry<float> ThirdLawPower;
+        public static ConfigEntry<float> ThirdLawRotationSpeedMultiplier;
     }
 }

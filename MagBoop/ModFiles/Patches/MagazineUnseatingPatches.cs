@@ -187,7 +187,6 @@ namespace MagBoop.ModFiles
                     magColliders.Where(x => x == contactPoint.otherCollider || x == contactPoint.thisCollider).ToArray();
 
                 if (!contactCols.Any()) return;
-
                 if (Vector3.Dot(col.relativeVelocity, contactCols[0].transform.position) <= 0f) return;
                     
                 // Re seat mag and play appropriate noise

@@ -183,13 +183,16 @@ namespace MagBoop.ModFiles
             // torque = distance x force
             var force = 10f * UserConfig.ThirdLawPower.Value * handVelocityMag * boopDir;
             var torque = Vector3.Cross(weaponRb.transform.position - handRb.transform.position, force);
+            
+            // Have to use a weird new vector for the direction of torque, because unity physics bad
+
+            torque = - torque.magnitude * weaponRb.transform.right;
 
             if (!weaponRb)
                 return;
 
             weaponRb.AddTorque(torque, ForceMode.Force);
-            Debug.Log("Applying rotation speed decrease");
-            Debug.Log(thisMagScript.FireArm.RotIntensity);
+            
             thisMagScript.FireArm.RotIntensity *= UserConfig.ThirdLawRotationSpeedMultiplier.Value;
             StartRotationSpeedTimer();
         }
